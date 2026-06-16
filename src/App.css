@@ -18,15 +18,14 @@
   background-color: #E4E4E4;
 }
 
-.exp_full {
+.exp_fill {
   position: absolute;
   border-radius: 100%;
   width: 75px;
   height: 75px;
   top: 62px;
   left: 28px;
-  background-color: #BEDF75;
-  box-shadow: 1px 1.2px #000000;
+  box-shadow: 0px 0px 1px 0px #000000;
 }
 
 .levelNum {
@@ -121,10 +120,10 @@
 
 /* Robot CSS */
 
-.enemy {
+.enemies {
   position: absolute;
   top: 180px;
-  left: 37px;
+  left: 42px;
 }
 
 .progress-bar {
@@ -137,17 +136,17 @@
   background-color: #BEDF75;
   border: 1px solid #A1A1A1AD;
   box-shadow: 1px 1px 4px #0000007e;
+  overflow: hidden;
 }
 
 .progress-bar_fill {
   position: absolute;
-  width: 343px;
-  height: 46px;
-  top: 530px;
-  left: 45px;
+  top: 0;
+  left: 0;
+  height: 100%;
   border-radius: 22px;
   box-shadow: 1px 1px 4px #0000007e;
-  transition: 0.5s ease-out;
+  transition: width 0.5s ease-out, background-color 0.5s ease-out;
 }
 
 .progress_lable {
@@ -159,4 +158,6 @@
   font-size: 15px;
   color: #fff;
   text-shadow: 1px 1px 2px #0000007e;
+  position: relative;
+  z-index: 1;
 }
