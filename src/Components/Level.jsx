@@ -1,12 +1,13 @@
 import React from "react";
 
-const Level = () => {
+const Level = ({ level }) => {
+  return (
+    <div className="levelNum">
+      <h2>{level}</h2>
+    </div>
+  );
+};
 
-    return (
-        <div>
-         
-        </div>
-      );
-    };
-    
-    export default Level;
+export default Level;
+
+  

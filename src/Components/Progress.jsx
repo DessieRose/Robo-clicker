@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
-const Progress = () => {
-    const [progress, setProgress] = useState(100);
+const Progress = ({ progress }) => {
     const getColor = () => {
         if (progress < 40){
             return "#ff0000";
@@ -13,14 +12,13 @@ const Progress = () => {
     }
 
     return (
-
         <div className="container">
             <div className="progress-bar">
-                <div className="progress-bar_fill" style={{width: `${progress}%`, backgroundColor: getColor()}}>progress bar</div>
-                    <div className="progress_lable">{progress}%</div>
+                <div className="progress_lable">{progress}%</div>
+                    <div className="progress-bar_fill" style={{width: `${progress}%`, backgroundColor: getColor()}}></div>
             </div>
         </div>
     );
 };
-    
+
 export default Progress;
