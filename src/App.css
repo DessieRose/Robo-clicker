@@ -1,3 +1,18 @@
+:root {
+  --white: #FFFFFF;
+  --off-white: #E4E4E4;
+  --light-gray: #A4A4A4;
+  --pale-peach: #E8B487;
+  --pale-green: #BEDF75;
+
+  --dark-pale-green: #98B952;
+  --dark-pale-orange: #e6963c;
+  --dark-pale-red: #cc2626;
+  
+  --border: #A1A1A1AD;
+  --shadow: #0000007e;
+}
+
 .container {
   display: flex;
 }
@@ -15,7 +30,7 @@
   height: 75px;
   top: 62px;
   left: 28px;
-  background-color: #E4E4E4;
+  background-color: var(--off-white);
 }
 
 .exp_fill {
@@ -25,7 +40,7 @@
   height: 75px;
   top: 62px;
   left: 28px;
-  box-shadow: 0px 0px 1px 0px #000000;
+  box-shadow: 0px 0px 1px 0px var(--shadow);
 }
 
 .levelNum {
@@ -36,7 +51,7 @@
   height: 65px;
   top: 67px;
   left: 33px;
-  background-color: #E8B487;
+  background-color: var(--pale-peach);
 }
 
 .levelNum h2 {
@@ -46,7 +61,7 @@
   margin: 0;
   font-weight: 400;
   font-size: 36px;
-  color: #FFFFFF;
+  color: var(--white);
 }
 
 .level {
@@ -56,8 +71,8 @@
   top: 121px;
   left: 36px;
   border-radius: 15px;
-  background-color: #A4A4A4;
-  box-shadow: 2px 2px 4px #0000007e;
+  background-color: var(--light-gray);
+  box-shadow: 2px 2px 4px var(--shadow);
 
 }
 
@@ -68,7 +83,7 @@
   margin: 0;
   font-weight: 600;
   font-size: 15px;
-  color: #FFFFFF;
+  color: var(--white);
 }
 
 .money {
@@ -80,8 +95,8 @@
   top: 77px;
   left: 124px;
   border-radius: 22px;
-  background-color: #FFFFFF;
-  border: 1px solid #A1A1A1AD;
+  background-color: var(--white);
+  border: 1px solid var(--border);
 }
 
 .money p {
@@ -92,7 +107,7 @@
   font-weight: 400;
   font-size: 15px;
   color: #000000;
-  text-shadow: 1px 1px 2px #0000007e;
+  text-shadow: 1px 1px 2px var(--shadow);
 }
 
 .clicks {
@@ -103,8 +118,8 @@
   top: 104px;
   left: 155px;
   border-radius: 22px;
-  background-color: #E4E4E4;
-  border: 1px solid #A1A1A1AD;
+  background-color: var(--off-white);
+  border: 1px solid var(--border);
 }
 
 .clicks p {
@@ -115,7 +130,7 @@
   font-weight: 400;
   font-size: 12px;
   color: #000000;
-  text-shadow: 1px 1px 2px #0000007e;
+  text-shadow: 1px 1px 2px var(--shadow);
 }
 
 /* Robot CSS */
@@ -133,9 +148,9 @@
   top: 530px;
   left: 45px;
   border-radius: 22px;
-  background-color: #BEDF75;
-  border: 1px solid #A1A1A1AD;
-  box-shadow: 1px 1px 4px #0000007e;
+  background-color: var(--pale-green);
+  border: 1px solid var(--border);
+  box-shadow: 1px 1px 4px var(--shadow);
   overflow: hidden;
 }
 
@@ -145,7 +160,7 @@
   left: 0;
   height: 100%;
   border-radius: 22px;
-  box-shadow: 1px 1px 4px #0000007e;
+  box-shadow: 1px 1px 4px var(--shadow);
   transition: width 0.5s ease-out, background-color 0.5s ease-out;
 }
 
@@ -156,8 +171,35 @@
   margin: 0;
   font-weight: 700;
   font-size: 15px;
-  color: #fff;
-  text-shadow: 1px 1px 2px #0000007e;
+  color: var(--white);
+  text-shadow: 1px 1px 2px var(--shadow);
   position: relative;
   z-index: 1;
+}
+
+/* Buttons CSS */
+.buttons {
+  position: absolute;
+  display: flex;
+  bottom: 30px;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.settings {
+  width: 100px;
+  height: 40px;
+  border-radius: 22px;
+  background-color: var(--off-white);
+  border: 1px solid var(--border);
+  box-shadow: 1px 1px 4px var(--shadow);
+}
+
+.upgrades {
+  width: 100px;
+  height: 40px;
+  border-radius: 22px;
+  background-color: var(--off-white);
+  border: 1px solid var(--border);
+  box-shadow: 1px 1px 4px var(--shadow);
 }

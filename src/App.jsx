@@ -4,8 +4,10 @@ import Exp from './Components/Exp.jsx';
 import Progress from './Components/Progress.jsx';
 import Clicks from './Components/Clicks.jsx';
 import Level from './Components/Level.jsx';
-import './App.css';
 import Money from './Components/Money.jsx';
+import Upgrades from './Components/Upgrades.jsx';
+import Settings from './Components/Settings.jsx';
+import './App.css';
 
 
 export default function App() {
@@ -60,6 +62,10 @@ export default function App() {
       <div>
         <Enemies key={enemyId} id={enemyId} onClick={handleAttack} />
         <Progress progress={progress} />
+      </div>
+      <div className="buttons">
+        <Settings />
+        <Upgrades />
       </div>
     </div>
   );

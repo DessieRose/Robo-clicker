@@ -3,11 +3,11 @@ import React from "react";
 const Progress = ({ progress }) => {
     const getColor = () => {
         if (progress < 40){
-            return "#ff0000";
+            return "var(--dark-pale-red)";
         } else if (progress < 70){
-            return "#ffa500";
+            return "var(--dark-pale-orange)";
         } else {
-            return "#2ecc71";
+            return "var(--dark-pale-green)";
         }
     }
 
