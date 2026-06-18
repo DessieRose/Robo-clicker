@@ -11,14 +11,16 @@ const Clicks = ({ clickCount }) => {
         setClicksPerSecond(timestamps.current.length);
     }, [clickCount]);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const now = Date.now();
-            timestamps.current = timestamps.current.filter(t => now - t < 1000);
-            setClicksPerSecond(timestamps.current.length);
-        }, 200);
-        return () => clearInterval(interval);
-    }, []);
+    // This effect is optional and can be used to clean up old timestamps periodically
+    
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         const now = Date.now();
+    //         timestamps.current = timestamps.current.filter(t => now - t < 1000);
+    //         setClicksPerSecond(timestamps.current.length);
+    //     }, 200);
+    //     return () => clearInterval(interval);
+    // }, []);
 
     return (
         <div className="clicks">

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Progress = ({ progress }) => {
+const Progress = ({ progress, upgrades }) => {
     const getColor = () => {
         if (progress < 40){
             return "var(--dark-pale-red)";
@@ -14,7 +14,7 @@ const Progress = ({ progress }) => {
     return (
         <div className="container">
             <div className="progress-bar">
-                <div className="progress_lable">{progress}%</div>
+                <div className="progress_lable">{Number(Math.max(progress, 0).toFixed(1))}%</div>
                     <div className="progress-bar_fill" style={{width: `${progress}%`, backgroundColor: getColor()}}></div>
             </div>
         </div>
