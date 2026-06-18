@@ -19,6 +19,8 @@
 
 * {
   box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+
 }
 
 /* Heaser CSS */
@@ -210,7 +212,17 @@
   background-color: var(--off-white);
   display: grid;
   width: 100%;
-  height: 50vh;
+  height: 80vh;
+  z-index: 100;
+  border-radius: 19px 19px 0 0;
+}
+
+.upgrade-sheet img {
+  width: 20vw;
+  height: auto;
+  background-color: var(--off-white);
+  padding: 1rem;
+  border-radius: 0.3rem;
 }
 
 .upgrade-sheet.open {
@@ -228,4 +240,43 @@
   padding: 1rem;
   font-size: 1.2rem;
   border-radius: 1rem;
+}
+
+.upgrade-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  background-color: var(--white);
+  margin: 1rem 1rem 0 1rem;
+  border-radius: 0.7rem;
+}
+
+.upgrade-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upgrade-progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--off-white);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.upgrade-progress-fill {
+  height: 100%;
+  background-color: var(--pale-green);
+  border-radius: 4px;
+  transition: width 0.3s ease-out;
+}
+
+.upgrade-button {
+  background-color: var(--pale-green);
+  opacity: 76%;
+  border: none;
+  padding: 1.5rem 1rem;
+  border-radius: 0.5rem;
 }
