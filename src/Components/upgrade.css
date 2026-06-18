@@ -1,4 +1,4 @@
-.upgrade-sheet {
+.upgrade-sheet, .settings-menu {
     position: fixed;
     bottom: 0;
     transform: translateY(100%);
@@ -20,7 +20,7 @@
     border-radius: 0.3rem;
   }
   
-  .upgrade-sheet.open {
+  .upgrade-sheet.open, .settings-menu.open {
     transform: translateY(0);
   }
   
