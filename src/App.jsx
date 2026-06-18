@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Enemies from './Components/Enemies.jsx';
 import Exp from './Components/Exp.jsx';
 import Progress from './Components/Progress.jsx';
@@ -7,10 +7,21 @@ import Level from './Components/Level.jsx';
 import Money from './Components/Money.jsx';
 import Upgrades from './Components/Upgrades.jsx';
 import Settings from './Components/Settings.jsx';
+import StartScreen from './Components/StartScreen.jsx';
+import backgroundMusic from './music/background-music.mp3';
 import './App.css';
 
 
 export default function App() {
+  const [started, setStarted] = useState(false);
+  const bgMusic = useRef(new Audio(backgroundMusic));
+
+  const handleStart = () => {
+    bgMusic.current.loop = true;
+    bgMusic.current.volume = 0.4;
+    bgMusic.current.play();
+    setStarted(true);
+  };
   const [clickCount, setClickCount] = useState(0);
   const [progress, setProgress] = useState(100);
   const [exp, setExp] = useState(0);
@@ -65,6 +76,10 @@ export default function App() {
       });
     }
   }, [progress]);
+
+  if (!started) {
+    return <StartScreen onStart={handleStart} />;
+  }
 
   return (
     <div className="container">

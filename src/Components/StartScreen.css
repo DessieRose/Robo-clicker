@@ -1,0 +1,40 @@
+.start-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 100;
+}
+
+.start-screen__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.start-screen__button {
+  position: relative;
+  z-index: 1;
+  margin-bottom: 80px;
+  padding: 14px 48px;
+  border: none;
+  border-radius: 22px;
+  background-color: var(--pale-peach);
+  color: var(--white);
+  font-family: "Andika", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 2px 4px 8px var(--shadow);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.start-screen__button:active {
+  transform: scale(0.96);
+  box-shadow: 1px 2px 4px var(--shadow);
+}
