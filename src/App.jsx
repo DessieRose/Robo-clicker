@@ -14,6 +14,7 @@ import './App.css';
 
 export default function App() {
   const [started, setStarted] = useState(false);
+  const [music, setMusic] = useState(true);
   const bgMusic = useRef(new Audio(backgroundMusic));
 
   const handleStart = () => {
@@ -22,6 +23,11 @@ export default function App() {
     bgMusic.current.play();
     setStarted(true);
   };
+
+  useEffect(() => {
+    if (!started) return;
+    music ? bgMusic.current.play() : bgMusic.current.pause();
+  }, [music, started]);
   const [clickCount, setClickCount] = useState(0);
   const [progress, setProgress] = useState(100);
   const [exp, setExp] = useState(0);
@@ -100,7 +106,7 @@ export default function App() {
         <Progress progress={progress} />
       </div>
       <div className="buttons">
-        <Settings />
+        <Settings music={music} setMusic={setMusic} />
         <Upgrades money={money} setMoney={setMoney} upgrades={upgrades} setUpgrades={setUpgrades} />
       </div>
     </div>
