@@ -86,7 +86,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades }) => {
                 money={money}
             />
 
-            <button onClick={() => setIsOpen(false)}>
+            <button className="close-btn" onClick={() => setIsOpen(false)}>
                 Close
             </button>
             

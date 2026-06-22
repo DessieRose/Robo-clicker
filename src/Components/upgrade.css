@@ -6,7 +6,7 @@
   
     background-color: var(--off-white);
     width: 100%;
-    height: 80vh;
+    /* height: 80vh; */
     z-index: 100;
     border-radius: 19px 19px 0 0;
   }
@@ -24,17 +24,17 @@
     transform: translateY(0);
   }
   
-  .upgrade-sheet button {
+  .close-btn {
     display: flex;
-    position: absolute;
     background-color: var(--pale-peach);
     border: none;
-    width: 100%;
+    width: 93%;
     color: var(--white);
-    bottom: 0;
     padding: 1rem;
     font-size: 1.2rem;
     border-radius: 1rem;
+    margin: 1rem;
+    justify-content: center;
   }
   
   .upgrade-item {
@@ -83,3 +83,72 @@
     background-color: var(--light-gray);
     cursor: not-allowed;
   }
+
+/* Settings menu styles */
+.settings-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-menu h3 {
+  display: flex;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--dark-gray);
+  text-transform: uppercase;
+  margin-top: 2rem;
+}
+
+/* Settings toggles */
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--white);
+  margin: 0.75rem 1rem 0;
+  border-radius: 0.7rem;
+  font-size: 1rem;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background-color: var(--light-gray);
+  border-radius: 26px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  background-color: var(--white);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: var(--pale-green);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(22px);
+}
