@@ -11,9 +11,8 @@ const Toggle = ({ label, checked, onChange }) => (
   </div>
 );
 
-const Settings = ({ music, setMusic }) => {
+const Settings = ({ music, setMusic, sfx, setSfx }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [sfx, setSfx] = useState(true);
 
   return (
     <>

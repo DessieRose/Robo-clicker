@@ -9,17 +9,25 @@ import Upgrades from './Components/Upgrades.jsx';
 import Settings from './Components/Settings.jsx';
 import StartScreen from './Components/StartScreen.jsx';
 import backgroundMusic from './music/background-music.mp3';
+import LevelUpSound from './music/level-up.mp3';
+import MetalTap from './music/metal-tap.mp3';
 import './App.css';
 
 
 export default function App() {
   const [started, setStarted] = useState(false);
   const [music, setMusic] = useState(true);
+  const [sfx, setSfx] = useState(true);
   const bgMusic = useRef(new Audio(backgroundMusic));
+  const levelUpSfx = useRef(new Audio(LevelUpSound));
+  const metalTapSfx = useRef(new Audio(MetalTap));
+
+  levelUpSfx.current.volume = 0.2;
+  metalTapSfx.current.volume = 0.2;
 
   const handleStart = () => {
     bgMusic.current.loop = true;
-    bgMusic.current.volume = 0.4;
+    bgMusic.current.volume = 0.1;
     bgMusic.current.play();
     setStarted(true);
   };
@@ -63,6 +71,14 @@ export default function App() {
   };
 
   useEffect(() => {
+    if (level > 1 && sfx) levelUpSfx.current.play();
+  }, [level]);
+
+  useEffect(() => {
+    if (clickCount > 0 && sfx) metalTapSfx.current.play();
+  }, [clickCount]);
+
+  useEffect(() => {
     const img = new Image();
     img.src = `https://robohash.org/${enemyId + 1}?size=350x350`;
   }, [enemyId]);
@@ -72,7 +88,7 @@ export default function App() {
       setEnemyId(prev => prev + 1);
       setProgress(100);
       setExp(prev => {
-        const newExp = prev + 5;
+        const newExp = prev + Math.max(1, Math.floor(50 / level));
         if (newExp >= 100) {
           setLevel(l => l + 1);
           setMoney(m => m + 5);
@@ -106,7 +122,7 @@ export default function App() {
         <Progress progress={progress} />
       </div>
       <div className="buttons">
-        <Settings music={music} setMusic={setMusic} />
+        <Settings music={music} setMusic={setMusic} sfx={sfx} setSfx={setSfx} />
         <Upgrades money={money} setMoney={setMoney} upgrades={upgrades} setUpgrades={setUpgrades} />
       </div>
     </div>
