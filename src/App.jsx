@@ -8,6 +8,7 @@ import Money from './Components/Money.jsx';
 import Upgrades from './Components/Upgrades.jsx';
 import Settings from './Components/Settings.jsx';
 import StartScreen from './Components/StartScreen.jsx';
+
 import backgroundMusic from './music/background-music.mp3';
 import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
@@ -42,11 +43,18 @@ export default function App() {
   const [level, setLevel] = useState(1);
   const [enemyId, setEnemyId] = useState(Math.floor(Math.random() * 1000000));
   const [money, setMoney] = useState(0);
+
   const [upgrades, setUpgrades] = useState({
     strength:       { level: 1, progress: 0 },
     stamina:        { level: 1, progress: 0 },
     attackDamage:   { level: 1, progress: 0 },
     criticalDamage: { level: 1, progress: 0 },
+  });
+
+  const [autoUpgrades, setAutoUpgrades] = useState({
+    drone:  { stage: 0 },
+    turret: { stage: 0 },
+    robot:  { stage: 0 },
   });
 
   const handleAttack = () => {
@@ -69,6 +77,21 @@ export default function App() {
     const baseDamage = Math.floor(level / 5) + 1;
     setProgress(prev => prev - (baseDamage + strengthBonus + staminaBonus + attackBonus + critBonus));
   };
+
+  const handleAttackRef = useRef(handleAttack);
+  useEffect(() => { handleAttackRef.current = handleAttack; });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      Object.values(autoUpgrades).forEach((upgrade) => {
+        if (upgrade.stage > 0) {
+          handleAttackRef.current();
+        }
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+    
+  }, [autoUpgrades]);
 
   useEffect(() => {
     if (level > 1 && sfx) levelUpSfx.current.play();
@@ -123,7 +146,7 @@ export default function App() {
       </div>
       <div className="buttons">
         <Settings music={music} setMusic={setMusic} sfx={sfx} setSfx={setSfx} />
-        <Upgrades money={money} setMoney={setMoney} upgrades={upgrades} setUpgrades={setUpgrades} />
+        <Upgrades money={money} setMoney={setMoney} upgrades={upgrades} setUpgrades={setUpgrades} autoUpgrades={autoUpgrades} setAutoUpgrades={setAutoUpgrades} />
       </div>
     </div>
   );

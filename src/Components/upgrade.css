@@ -84,6 +84,89 @@
     cursor: not-allowed;
   }
 
+/* Upgrade tabs */
+.upgrade-tabs {
+  display: flex;
+  margin: 1rem 1rem 0;
+  background-color: var(--white);
+  border-radius: 0.7rem;
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.upgrade-tab {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--light-gray);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.upgrade-tab.active {
+  background-color: var(--pale-peach);
+  color: var(--white);
+}
+
+/* Information dropdown */
+.information {
+  margin: 0.75rem 1rem 0;
+  background-color: var(--white);
+  border-radius: 0.7rem;
+  overflow: hidden;
+}
+
+.information-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.info-icon {
+  font-size: 1.2rem;
+  color: var(--pale-peach);
+}
+
+.info-chevron {
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+
+.info-chevron.open {
+  transform: rotate(180deg);
+}
+
+.information-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease-out, padding 0.25s;
+}
+
+.information-list.open {
+  max-height: 200px;
+  padding: 0 1rem 0.75rem;
+}
+
+.information-list li {
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+  color: #444;
+  border-top: 1px solid var(--off-white);
+}
+
 /* Settings menu styles */
 .settings-menu {
   display: flex;
