@@ -58,8 +58,9 @@ export default function App() {
   });
 
   const handleAttack = () => {
-    setClickCount(prev => prev + 1);
-    setMoney(prev => prev + 1);
+    const newCount = clickCount + 1;
+    setClickCount(newCount);
+    setMoney(m => m + 1 + (newCount % 5 === 0 ? 3 : 0));
 
     const strengthLevel = upgrades.strength.level === 'MAX' ? 5 : upgrades.strength.level;
     const strengthBonus = (strengthLevel - 1) + upgrades.strength.progress / 100;
@@ -114,7 +115,7 @@ export default function App() {
         const newExp = prev + Math.max(1, Math.floor(50 / level));
         if (newExp >= 100) {
           setLevel(l => l + 1);
-          setMoney(m => m + 5);
+          setMoney(m => m + level * 10);
           return 0;
         }
         return newExp;
