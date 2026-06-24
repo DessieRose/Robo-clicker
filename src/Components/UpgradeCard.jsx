@@ -1,17 +1,19 @@
-export const getUpgradePrice = (level) => {
-    switch (level) {
-        case 1: return 50;
-        case 2: return 100;
-        case 3: return 150;
-        case 4: return 200;
-        case 5: return 250;
-        default: return 0;
-    }
+const PRICES = {
+    strength:       [30,  60,  100, 150, 220],
+    luck:           [80, 150, 250, 400, 600],
+    attackDamage:   [60,  120, 200, 320, 500],
+    criticalDamage: [50,  100, 160, 250, 380],
 };
 
-const UpgradeCard = ({ title, image, progress, level, onUpgrade, money }) => {
+export const getUpgradePrice = (key, level) => {
+    const levelPrices = PRICES[key];
+    if (!levelPrices || level < 1 || level > 5) return 0;
+    return levelPrices[level - 1];
+};
+
+const UpgradeCard = ({ upgradeKey, title, image, progress, level, onUpgrade, money }) => {
     const isMax = level === 'MAX';
-    const price = getUpgradePrice(level);
+    const price = getUpgradePrice(upgradeKey, level);
     const canAfford = !isMax && money >= price;
 
     return (

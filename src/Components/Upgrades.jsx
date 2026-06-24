@@ -6,7 +6,7 @@ import AutoUpgradeCard from "./AutoUpgradeCard";
 import "./upgrade.css";
 
 import strengthIcon from "../Images/strength-icon.png";
-import staminaIcon from "../Images/stamina-icon.png";
+import luckIcon from "../Images/luck-icon.png";
 import attackDamageIcon from "../Images/attack-damage-icon.png";
 import criticalDamageIcon from "../Images/critical-damage-icon.png";
 
@@ -19,7 +19,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
     const current = upgrades[key];
     if (current.level === 'MAX') return;
 
-    const price = getUpgradePrice(current.level);
+    const price = getUpgradePrice(key, current.level);
     if (money < price) return;
 
     setMoney(prev => prev - price);
@@ -48,7 +48,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
   };
 
   const hasAffordableUpgrade =
-    Object.values(upgrades).some(u => u.level !== 'MAX' && money >= getUpgradePrice(u.level)) ||
+    Object.entries(upgrades).some(([key, u]) => u.level !== 'MAX' && money >= getUpgradePrice(key, u.level)) ||
     Object.values(autoUpgrades).some(u => u.stage < 5 && money >= 200 + u.stage * 100);
 
   return (
@@ -75,6 +75,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
 
         {activeTab === 'combat' && <>
           <UpgradeCard
+            upgradeKey="strength"
             title="Strength"
             image={strengthIcon}
             progress={upgrades.strength.progress}
@@ -83,14 +84,16 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
             money={money}
           />
           <UpgradeCard
-            title="Stamina"
-            image={staminaIcon}
-            progress={upgrades.stamina.progress}
-            level={upgrades.stamina.level}
-            onUpgrade={() => handleUpgrade('stamina')}
+            upgradeKey="luck"
+            title="Luck"
+            image={luckIcon}
+            progress={upgrades.luck.progress}
+            level={upgrades.luck.level}
+            onUpgrade={() => handleUpgrade('luck')}
             money={money}
           />
           <UpgradeCard
+            upgradeKey="attackDamage"
             title="Attack damage"
             image={attackDamageIcon}
             progress={upgrades.attackDamage.progress}
@@ -99,6 +102,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
             money={money}
           />
           <UpgradeCard
+            upgradeKey="criticalDamage"
             title="Critical damage"
             image={criticalDamageIcon}
             progress={upgrades.criticalDamage.progress}
@@ -113,10 +117,10 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
               <span className={`info-chevron ${isInfoOpen ? 'open' : ''}`}>▾</span>
             </button>
             <ul className={`information-list ${isInfoOpen ? 'open' : ''}`}>
-              <li><strong>Strength</strong>: Increases base damage by 1 per upgrade.</li>
-              <li><strong>Stamina</strong>: Increases max health by 10 per upgrade.</li>
-              <li><strong>Attack damage</strong>: Increases damage multiplier by 0.1 per upgrade.</li>
-              <li><strong>Critical damage</strong>: Increases critical hit chance by 10% per level.</li>
+              <li><strong>Strength</strong>: +3 click damage per level.</li>
+              <li><strong>Luck</strong>: +50% coins per click per level (up to ×3 at max).</li>
+              <li><strong>Attack damage</strong>: +20% damage multiplier per level.</li>
+              <li><strong>Critical damage</strong>: +12% critical hit chance per level.</li>
             </ul>
           </div>
         </>}

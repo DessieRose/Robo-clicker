@@ -52,7 +52,7 @@ export default function App() {
 
   const [upgrades, setUpgrades] = useState({
     strength:       { level: 1, progress: 0 },
-    stamina:        { level: 1, progress: 0 },
+    luck:           { level: 1, progress: 0 },
     attackDamage:   { level: 1, progress: 0 },
     criticalDamage: { level: 1, progress: 0 },
   });
@@ -66,25 +66,24 @@ export default function App() {
   const handleAttack = (baseDamage = 1) => {
     const newCount = clickCount + 1;
     setClickCount(newCount);
-    const coinsEarned = 1 + (newCount % 5 === 0 ? 3 : 0);
+    const luckLevel = upgrades.luck.level === 'MAX' ? 5 : upgrades.luck.level;
+    const luckMultiplier = 1 + (luckLevel - 1) * 0.5;
+    const coinsEarned = Math.round((1 + (newCount % 5 === 0 ? 3 : 0)) * luckMultiplier);
     setMoney(m => m + coinsEarned);
     setTotalMoneyEarned(t => t + coinsEarned);
 
     const strengthLevel = upgrades.strength.level === 'MAX' ? 5 : upgrades.strength.level;
-    const strengthBonus = (strengthLevel - 1) + upgrades.strength.progress / 100;
-
-    const staminaLevel = upgrades.stamina.level === 'MAX' ? 5 : upgrades.stamina.level;
-    const staminaBonus = (staminaLevel - 1) + upgrades.stamina.progress / 100;
+    const strengthBonus = (strengthLevel - 1) * 3;
 
     const attackLevel = upgrades.attackDamage.level === 'MAX' ? 5 : upgrades.attackDamage.level;
-    const attackBonus = (attackLevel - 1) + upgrades.attackDamage.progress / 100;
+    const attackMultiplier = 1 + (attackLevel - 1) * 0.2;
 
-    const critLevel = upgrades.criticalDamage.level;
-    const critChance = (critLevel === 'MAX' ? 5 : critLevel - 1) * 0.1;
-    const critBonus = Math.random() < critChance ? 5 : 0;
+    const critLevel = upgrades.criticalDamage.level === 'MAX' ? 5 : upgrades.criticalDamage.level;
+    const critChance = (critLevel - 1) * 0.12;
+    const critBonus = Math.random() < critChance ? baseDamage * 0.5 : 0;
 
-    const enemyMaxHp = level * 20;
-    const totalDamage = baseDamage + strengthBonus + staminaBonus + attackBonus + critBonus;
+    const enemyMaxHp = Math.pow(level * 1.2, 2) * 100; // Example formula for enemy max HP based on level
+    const totalDamage = (baseDamage + strengthBonus + critBonus) * attackMultiplier;
     setProgress(prev => prev - (totalDamage / enemyMaxHp) * 100);
   };
 
@@ -92,7 +91,7 @@ export default function App() {
   useEffect(() => { handleAttackRef.current = handleAttack; });
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const id = setInterval(() => {
       let autoHits = 0;
       Object.entries(autoUpgrades).forEach(([key, upgrade]) => {
         if (upgrade.stage > 0) {
@@ -104,8 +103,7 @@ export default function App() {
       });
       if (autoHits > 0) setAutoClickCount(prev => prev + autoHits);
     }, 1000);
-    return () => clearInterval(interval);
-    
+    return () => clearInterval(id);
   }, [autoUpgrades]);
 
   useEffect(() => {
@@ -160,7 +158,7 @@ export default function App() {
       </div>
       <div>
         <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} level={level} />
-        <Progress progress={progress} />
+        <Progress progress={progress} level={level} />
       </div>
       <div className="buttons">
         <Settings music={music} setMusic={setMusic} sfx={sfx} setSfx={setSfx} />
