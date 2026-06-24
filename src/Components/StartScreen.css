@@ -16,6 +16,15 @@
   object-fit: cover;
 }
 
+.start-screen__logo {
+  position: absolute;
+  z-index: 1;
+  margin-top: 20px;
+  width: 100vw;
+  height: auto;
+  top: 70px;
+}
+
 .start-screen__button {
   position: relative;
   z-index: 1;
