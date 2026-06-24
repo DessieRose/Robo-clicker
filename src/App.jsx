@@ -8,27 +8,13 @@ import Money from './Components/Money.jsx';
 import Settings from './Components/Settings.jsx';
 import Achievements from './Components/Achievements.jsx';
 import Upgrades from './Components/Upgrades.jsx';
+import { Stages } from './Components/AutoUpgradeCard.jsx';
 import StartScreen from './Components/StartScreen.jsx';
 import backgroundMusic from './music/background-music.mp3';
 import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
 import AchievementSound from './music/achievement.mp3';
 import './App.css';
-
-const ACHIEVEMENTS = [
-  { id: 'first_click',  name: 'First Blood',      description: 'Make your first click' },
-  { id: 'clicks_50',   name: 'Warming Up',        description: 'Make 50 clicks' },
-  { id: 'clicks_200',  name: 'Click Machine',     description: 'Make 200 clicks' },
-  { id: 'bonus_coin',  name: 'Lucky Five',        description: 'Trigger the 5-click coin bonus' },
-  { id: 'kills_1',     name: 'First Kill',        description: 'Defeat your first enemy' },
-  { id: 'kills_10',    name: 'Enemy Slayer',       description: 'Defeat 10 enemies' },
-  { id: 'kills_50',    name: 'Destroyer',         description: 'Defeat 50 enemies' },
-  { id: 'coins_50',    name: 'Pocket Change',     description: 'Earn 50 coins' },
-  { id: 'coins_500',   name: 'Stacking Coins',    description: 'Earn 500 coins' },
-  { id: 'level_2',     name: 'Rising Star',       description: 'Reach level 2' },
-  { id: 'level_5',     name: 'Veteran',           description: 'Reach level 5' },
-  { id: 'auto_attack', name: 'Hands Free',        description: 'Buy your first auto upgrade' },
-];
 
 export default function App() {
   const [started, setStarted] = useState(false);
@@ -38,7 +24,6 @@ export default function App() {
   const levelUpSfx = useRef(new Audio(LevelUpSound));
   const metalTapSfx = useRef(new Audio(MetalTap));
   const achievementSfx = useRef(new Audio(AchievementSound));
-  const achievementFirstRender = useRef(true);
 
   levelUpSfx.current.volume = 0.2;
   metalTapSfx.current.volume = 0.2;
@@ -64,7 +49,6 @@ export default function App() {
   const [money, setMoney] = useState(0);
   const [totalMoneyEarned, setTotalMoneyEarned] = useState(0);
   const [enemiesDefeated, setEnemiesDefeated] = useState(0);
-  const [unlockedAchievements, setUnlockedAchievements] = useState(new Set());
 
   const [upgrades, setUpgrades] = useState({
     strength:       { level: 1, progress: 0 },
@@ -79,7 +63,7 @@ export default function App() {
     robot:  { stage: 0 },
   });
 
-  const handleAttack = () => {
+  const handleAttack = (baseDamage = 1) => {
     const newCount = clickCount + 1;
     setClickCount(newCount);
     const coinsEarned = 1 + (newCount % 5 === 0 ? 3 : 0);
@@ -99,7 +83,6 @@ export default function App() {
     const critChance = (critLevel === 'MAX' ? 5 : critLevel - 1) * 0.1;
     const critBonus = Math.random() < critChance ? 5 : 0;
 
-    const baseDamage = 1;
     const enemyMaxHp = level * 20;
     const totalDamage = baseDamage + strengthBonus + staminaBonus + attackBonus + critBonus;
     setProgress(prev => prev - (totalDamage / enemyMaxHp) * 100);
@@ -111,9 +94,11 @@ export default function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       let autoHits = 0;
-      Object.values(autoUpgrades).forEach((upgrade) => {
+      Object.entries(autoUpgrades).forEach(([key, upgrade]) => {
         if (upgrade.stage > 0) {
-          handleAttackRef.current();
+          const stageData = Stages.find(s => s.upgradeName.toLowerCase() === key);
+          const stageDamage = stageData?.stages.find(s => s.stage === upgrade.stage)?.damage ?? 1;
+          handleAttackRef.current(stageDamage);
           autoHits++;
         }
       });
@@ -130,11 +115,6 @@ export default function App() {
   useEffect(() => {
     if (clickCount > 0 && sfx) metalTapSfx.current.play();
   }, [clickCount, sfx]);
-
-  useEffect(() => {
-    if (achievementFirstRender.current) { achievementFirstRender.current = false; return; }
-    if (sfx) achievementSfx.current.play();
-  }, [unlockedAchievements, sfx]);
 
   useEffect(() => {
     const img = new Image();
@@ -160,25 +140,6 @@ export default function App() {
     }
   }, [progress, level]);
 
-  useEffect(() => {
-    setUnlockedAchievements(prev => {
-      const next = new Set(prev);
-      if (clickCount >= 1)   next.add('first_click');
-      if (clickCount >= 50)  next.add('clicks_50');
-      if (clickCount >= 200) next.add('clicks_200');
-      if (clickCount >= 5)   next.add('bonus_coin');
-      if (enemiesDefeated >= 1)  next.add('kills_1');
-      if (enemiesDefeated >= 10) next.add('kills_10');
-      if (enemiesDefeated >= 50) next.add('kills_50');
-      if (totalMoneyEarned >= 50)  next.add('coins_50');
-      if (totalMoneyEarned >= 500) next.add('coins_500');
-      if (level >= 2) next.add('level_2');
-      if (level >= 5) next.add('level_5');
-      if (Object.values(autoUpgrades).some(u => u.stage > 0)) next.add('auto_attack');
-      return next.size !== prev.size ? next : prev;
-    });
-  }, [clickCount, enemiesDefeated, totalMoneyEarned, level, autoUpgrades]);
-
   if (!started) {
     return <StartScreen onStart={handleStart} />;
   }
@@ -198,12 +159,20 @@ export default function App() {
         <Clicks clickCount={autoClickCount} />
       </div>
       <div>
-        <Enemies key={enemyId} id={enemyId} onClick={handleAttack} level={level} />
+        <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} level={level} />
         <Progress progress={progress} />
       </div>
       <div className="buttons">
         <Settings music={music} setMusic={setMusic} sfx={sfx} setSfx={setSfx} />
-        <Achievements achievements={ACHIEVEMENTS} unlocked={unlockedAchievements} />
+        <Achievements
+          clickCount={clickCount}
+          enemiesDefeated={enemiesDefeated}
+          totalMoneyEarned={totalMoneyEarned}
+          level={level}
+          autoUpgrades={autoUpgrades}
+          upgrades={upgrades}
+          onUnlock={() => { if (sfx) achievementSfx.current.play(); }}
+        />
         <Upgrades money={money} setMoney={setMoney} upgrades={upgrades} setUpgrades={setUpgrades} autoUpgrades={autoUpgrades} setAutoUpgrades={setAutoUpgrades} />
       </div>
     </div>

@@ -47,9 +47,13 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
     }));
   };
 
+  const hasAffordableUpgrade =
+    Object.values(upgrades).some(u => u.level !== 'MAX' && money >= getUpgradePrice(u.level)) ||
+    Object.values(autoUpgrades).some(u => u.stage < 5 && money >= 200 + u.stage * 100);
+
   return (
     <>
-      <div className="upgrades" onClick={() => setIsOpen(!isOpen)}>
+      <div className={`upgrades ${hasAffordableUpgrade ? 'has-new' : ''}`} onClick={() => setIsOpen(!isOpen)}>
         <FiPlusCircle className="icon" />
       </div>
 

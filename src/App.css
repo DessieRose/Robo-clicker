@@ -200,6 +200,11 @@
   background-color: var(--pale-peach);
 }
 
+.has-new {
+  border: 3px solid var(--dark-pale-green);
+  box-shadow: 0 0 8px var(--dark-pale-green);
+}
+
 .icon {
   width: 100%;
   height: auto;

@@ -10,8 +10,9 @@ export const getUpgradePrice = (level) => {
 };
 
 const UpgradeCard = ({ title, image, progress, level, onUpgrade, money }) => {
+    const isMax = level === 'MAX';
     const price = getUpgradePrice(level);
-    const canAfford = money >= price;
+    const canAfford = !isMax && money >= price;
 
     return (
         <div className="upgrade-item">
@@ -26,10 +27,10 @@ const UpgradeCard = ({ title, image, progress, level, onUpgrade, money }) => {
             </div>
 
             <div
-                className={`upgrade-button ${canAfford ? '' : 'upgrade-button--disabled'}`}
-                onClick={onUpgrade}
+                className={`upgrade-button ${isMax || !canAfford ? 'upgrade-button--disabled' : ''}`}
+                onClick={!isMax ? onUpgrade : undefined}
             >
-                {`Upgrade $${price}`}
+                {isMax ? 'MAX' : `Upgrade $${price}`}
             </div>
         </div>
     );

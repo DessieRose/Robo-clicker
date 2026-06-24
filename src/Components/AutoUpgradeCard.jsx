@@ -16,30 +16,30 @@ import robotCopImage from "../Images/auto/robot/robot-cop.png";
 import militaryRobotImage from "../Images/auto/robot/military-robot.png";
 import robotArnoldImage from "../Images/auto/robot/robot-cyborg.png";
 
-const Stages = [
+export const Stages = [
     {
         upgradeName: "Drone", stages: [
-    {stage: 1, name: "Scrap Drone",    price: 200, damage: 15, image: scrapDroneImage},
-    {stage: 2, name: "Tiny Drone",     price: 300, damage: 25, image: tinyDroneImage},
-    {stage: 3, name: "Large Drone",    price: 400, damage: 35, image: largeDroneImage},
-    {stage: 4, name: "Military Drone", price: 500, damage: 45, image: militaryDroneImage},
-    {stage: 5, name: "Battle Drone",   price: 600, damage: 55, image: battleDroneImage},
+    {stage: 1, name: "Scrap Drone",    price: 500, damage: 15, image: scrapDroneImage},
+    {stage: 2, name: "Tiny Drone",     price: 800, damage: 25, image: tinyDroneImage},
+    {stage: 3, name: "Large Drone",    price: 1400, damage: 35, image: largeDroneImage},
+    {stage: 4, name: "Military Drone", price: 2500, damage: 45, image: militaryDroneImage},
+    {stage: 5, name: "Battle Drone",   price: 4000, damage: 55, image: battleDroneImage},
     ]},
     {
         upgradeName: "Turret", stages: [
-    {stage: 1, name: "Small Turret",   price: 200, damage: 15, image: smallTurretImage},
-    {stage: 2, name: "Large Turret",   price: 300, damage: 25, image: largeTurretImage},
-    {stage: 3, name: "Laser Turret",   price: 400, damage: 35, image: laserTurretImage},
-    {stage: 4, name: "Missile Turret", price: 500, damage: 45, image: missileTurretImage},
-    {stage: 5, name: "Plasma Turret",  price: 600, damage: 55, image: plasmaTurretImage},
+    {stage: 1, name: "Small Turret",   price: 600, damage: 15, image: smallTurretImage},
+    {stage: 2, name: "Large Turret",   price: 900, damage: 25, image: largeTurretImage},
+    {stage: 3, name: "Laser Turret",   price: 1500, damage: 35, image: laserTurretImage},
+    {stage: 4, name: "Missile Turret", price: 2600, damage: 45, image: missileTurretImage},
+    {stage: 5, name: "Plasma Turret",  price: 5000, damage: 55, image: plasmaTurretImage},
     ]},
     {
         upgradeName: "Robot", stages: [
-    {stage: 1, name: "Robot arm",   price: 200, damage: 15, image: robotArmImage},
-    {stage: 2, name: "Robot Friend",   price: 300, damage: 25, image: robotFriendImage},
-    {stage: 3, name: "Robot Cop",      price: 400, damage: 35, image: robotCopImage},
-    {stage: 4, name: "Military Robot", price: 500, damage: 45, image: militaryRobotImage},
-    {stage: 5, name: "Robot Arnold",   price: 600, damage: 55, image: robotArnoldImage},
+    {stage: 1, name: "Robot arm",   price: 700, damage: 15, image: robotArmImage},
+    {stage: 2, name: "Robot Friend",   price: 1000, damage: 25, image: robotFriendImage},
+    {stage: 3, name: "Robot Cop",      price: 1600, damage: 35, image: robotCopImage},
+    {stage: 4, name: "Military Robot", price: 2700, damage: 45, image: militaryRobotImage},
+    {stage: 5, name: "Robot Arnold",   price: 6000, damage: 55, image: robotArnoldImage},
     ]},
 ];
 
