@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { GoPlusCircle } from "react-icons/go";
+import { FiPlusCircle } from "react-icons/fi";
 import { IoInformationCircle } from "react-icons/io5";
 import UpgradeCard, { getUpgradePrice } from "./UpgradeCard";
 import AutoUpgradeCard from "./AutoUpgradeCard";
@@ -9,9 +9,6 @@ import strengthIcon from "../Images/strength-icon.png";
 import staminaIcon from "../Images/stamina-icon.png";
 import attackDamageIcon from "../Images/attack-damage-icon.png";
 import criticalDamageIcon from "../Images/critical-damage-icon.png";
-import droneIcon from "../Images/drone-icon.png";
-import turretIcon from "../Images/turret-icon.png";
-import robotIcon from "../Images/robot-icon.png";
 
 const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAutoUpgrades }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +50,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
   return (
     <>
       <div className="upgrades" onClick={() => setIsOpen(!isOpen)}>
-        <GoPlusCircle className="icon" />
+        <FiPlusCircle className="icon" />
       </div>
 
       <div className={`upgrade-sheet ${isOpen ? 'open' : ''}`}>
@@ -124,21 +121,18 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
             <AutoUpgradeCard
               upgradeName="Drone"
               stage={autoUpgrades.drone.stage}
-              image={droneIcon}
               onStage={(price) => handleAutoUpgrade('drone', price)}
               money={money}
             />
             <AutoUpgradeCard
               upgradeName="Turret"
               stage={autoUpgrades.turret.stage}
-              image={turretIcon}
               onStage={(price) => handleAutoUpgrade('turret', price)}
               money={money}
             />
             <AutoUpgradeCard
               upgradeName="Robot"
               stage={autoUpgrades.robot.stage}
-              image={robotIcon}
               onStage={(price) => handleAutoUpgrade('robot', price)}
               money={money}
             />

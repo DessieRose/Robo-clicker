@@ -237,12 +237,12 @@
 }
 
 /* Achievements menu */
-.achievements-menu {
+/* .achievements-menu {
   display: flex;
   flex-direction: column;
   max-height: 75vh;
   overflow-y: auto;
-}
+} */
 
 .achievements-menu h3 {
   display: flex;

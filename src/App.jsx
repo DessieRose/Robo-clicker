@@ -125,16 +125,16 @@ export default function App() {
 
   useEffect(() => {
     if (level > 1 && sfx) levelUpSfx.current.play();
-  }, [level]);
+  }, [level, sfx]);
 
   useEffect(() => {
     if (clickCount > 0 && sfx) metalTapSfx.current.play();
-  }, [clickCount]);
+  }, [clickCount, sfx]);
 
   useEffect(() => {
     if (achievementFirstRender.current) { achievementFirstRender.current = false; return; }
     if (sfx) achievementSfx.current.play();
-  }, [unlockedAchievements]);
+  }, [unlockedAchievements, sfx]);
 
   useEffect(() => {
     const img = new Image();
@@ -158,7 +158,7 @@ export default function App() {
         return newExp;
       });
     }
-  }, [progress]);
+  }, [progress, level]);
 
   useEffect(() => {
     setUnlockedAchievements(prev => {
