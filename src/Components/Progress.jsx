@@ -1,7 +1,8 @@
 import React from "react";
+import { getEnemyMaxHp } from "../gameFormulas.js";
 
 const Progress = ({ progress, level }) => {
-    const maxHp = Math.pow(level * 1.2, 2) * 100;
+    const maxHp = getEnemyMaxHp(level);
     const currentHp = Math.max(0, Math.round((progress / 100) * maxHp));
 
     const getColor = () => {

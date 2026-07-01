@@ -14,6 +14,7 @@ import backgroundMusic from './music/background-music.mp3';
 import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
 import AchievementSound from './music/achievement.mp3';
+import { getEnemyMaxHp } from './gameFormulas.js';
 import './App.css';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
   const levelUpSfx = useRef(new Audio(LevelUpSound));
   const metalTapSfx = useRef(new Audio(MetalTap));
   const achievementSfx = useRef(new Audio(AchievementSound));
+  const killProcessed = useRef(false);
 
   levelUpSfx.current.volume = 0.2;
   metalTapSfx.current.volume = 0.2;
@@ -45,7 +47,7 @@ export default function App() {
   const [progress, setProgress] = useState(100);
   const [exp, setExp] = useState(0);
   const [level, setLevel] = useState(1);
-  const [enemyId, setEnemyId] = useState(Math.floor(Math.random() * 1000000));
+  const [enemyId, setEnemyId] = useState(Math.floor(Math.random() + 1));
   const [money, setMoney] = useState(0);
   const [totalMoneyEarned, setTotalMoneyEarned] = useState(0);
   const [enemiesDefeated, setEnemiesDefeated] = useState(0);
@@ -66,23 +68,24 @@ export default function App() {
   const handleAttack = (baseDamage = 1) => {
     const newCount = clickCount + 1;
     setClickCount(newCount);
-    const luckLevel = upgrades.luck.level === 'MAX' ? 5 : upgrades.luck.level;
-    const luckMultiplier = 1 + (luckLevel - 1) * 0.5;
-    const coinsEarned = Math.round((1 + (newCount % 5 === 0 ? 3 : 0)) * luckMultiplier);
-    setMoney(m => m + coinsEarned);
-    setTotalMoneyEarned(t => t + coinsEarned);
 
     const strengthLevel = upgrades.strength.level === 'MAX' ? 5 : upgrades.strength.level;
-    const strengthBonus = (strengthLevel - 1) * 3;
+    const strengthProgress = upgrades.strength.level === 'MAX' ? 0 : upgrades.strength.progress;
+    const totalStrengthUpgrades = (strengthLevel - 1) * 5 + strengthProgress / 20;
+    const strengthBonus = totalStrengthUpgrades * 0.6;
 
     const attackLevel = upgrades.attackDamage.level === 'MAX' ? 5 : upgrades.attackDamage.level;
-    const attackMultiplier = 1 + (attackLevel - 1) * 0.2;
+    const attackProgress = upgrades.attackDamage.level === 'MAX' ? 0 : upgrades.attackDamage.progress;
+    const totalAttackUpgrades = (attackLevel - 1) * 5 + attackProgress / 20;
+    const attackMultiplier = 1 + totalAttackUpgrades * 0.04;
 
     const critLevel = upgrades.criticalDamage.level === 'MAX' ? 5 : upgrades.criticalDamage.level;
-    const critChance = (critLevel - 1) * 0.12;
+    const critProgress = upgrades.criticalDamage.level === 'MAX' ? 0 : upgrades.criticalDamage.progress;
+    const totalCritUpgrades = (critLevel - 1) * 5 + critProgress / 20;
+    const critChance = totalCritUpgrades * 0.024;
     const critBonus = Math.random() < critChance ? baseDamage * 0.5 : 0;
 
-    const enemyMaxHp = Math.pow(level * 1.2, 2) * 100; // Example formula for enemy max HP based on level
+    const enemyMaxHp = getEnemyMaxHp(level);
     const totalDamage = (baseDamage + strengthBonus + critBonus) * attackMultiplier;
     setProgress(prev => prev - (totalDamage / enemyMaxHp) * 100);
   };
@@ -121,22 +124,45 @@ export default function App() {
 
   useEffect(() => {
     if (progress <= 0) {
+      if (killProcessed.current) return;
+      killProcessed.current = true;
+      const luckLevel = upgrades.luck.level === 'MAX' ? 5 : upgrades.luck.level;
+      const luckProgress = upgrades.luck.level === 'MAX' ? 0 : upgrades.luck.progress;
+      const totalLuckUpgrades = (luckLevel - 1) * 5 + luckProgress / 20;
+      const luckMultiplier = 1 + totalLuckUpgrades * 0.1;
+
+      const strengthLevel = upgrades.strength.level === 'MAX' ? 5 : upgrades.strength.level;
+      const strengthProgress = upgrades.strength.level === 'MAX' ? 0 : upgrades.strength.progress;
+      const totalStrengthUpgrades = (strengthLevel - 1) * 5 + strengthProgress / 20;
+      const strengthBonus = totalStrengthUpgrades * 0.6;
+
+      const attackLevel = upgrades.attackDamage.level === 'MAX' ? 5 : upgrades.attackDamage.level;
+      const attackProgress = upgrades.attackDamage.level === 'MAX' ? 0 : upgrades.attackDamage.progress;
+      const totalAttackUpgrades = (attackLevel - 1) * 5 + attackProgress / 20;
+      const attackMultiplier = 1 + totalAttackUpgrades * 0.04;
+
+      const effectiveDamage = (1 + strengthBonus) * attackMultiplier;
+      const killReward = Math.round(level * 20 * effectiveDamage * luckMultiplier);
+
+      setMoney(m => m + killReward);
+      setTotalMoneyEarned(t => t + killReward);
+
       setEnemyId(prev => prev + 1);
       setProgress(100);
       setEnemiesDefeated(prev => prev + 1);
-      setExp(prev => {
-        const newExp = prev + Math.max(1, Math.floor(50 / level));
-        if (newExp >= 100) {
-          setLevel(l => l + 1);
-          const levelBonus = level * 10;
-          setMoney(m => m + levelBonus);
-          setTotalMoneyEarned(t => t + levelBonus);
-          return 0;
-        }
-        return newExp;
-      });
+      const expGain = Math.max(1, Math.floor(level + 50 * luckMultiplier));
+      const willLevelUp = exp + expGain >= 100;
+      setExp(willLevelUp ? 0 : exp + expGain);
+      if (willLevelUp) {
+        setLevel(l => l + 1);
+        const levelBonus = level * 10;
+        setMoney(m => m + levelBonus);
+        setTotalMoneyEarned(t => t + levelBonus);
+      }
+    } else {
+      killProcessed.current = false;
     }
-  }, [progress, level]);
+  }, [progress, exp, level, upgrades]);
 
   if (!started) {
     return <StartScreen onStart={handleStart} />;

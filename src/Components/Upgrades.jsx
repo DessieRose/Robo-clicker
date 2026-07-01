@@ -118,7 +118,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
             </button>
             <ul className={`information-list ${isInfoOpen ? 'open' : ''}`}>
               <li><strong>Strength</strong>: +3 click damage per level.</li>
-              <li><strong>Luck</strong>: +50% coins per click per level (up to ×3 at max).</li>
+              <li><strong>Luck</strong>: +50% kill reward per level (up to ×3 at max).</li>
               <li><strong>Attack damage</strong>: +20% damage multiplier per level.</li>
               <li><strong>Critical damage</strong>: +12% critical hit chance per level.</li>
             </ul>
