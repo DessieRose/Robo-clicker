@@ -47,6 +47,8 @@ export default function App() {
   const [progress, setProgress] = useState(100);
   const [exp, setExp] = useState(0);
   const [level, setLevel] = useState(1);
+  const [maxLevel, setMaxLevel] = useState(1);
+  const isNaturalLevelUp = useRef(false);
   const [enemyId, setEnemyId] = useState(Math.floor(Math.random() + 1));
   const [money, setMoney] = useState(0);
   const [totalMoneyEarned, setTotalMoneyEarned] = useState(0);
@@ -96,7 +98,10 @@ export default function App() {
   }, [autoUpgrades]);
 
   useEffect(() => {
-    if (level > 1 && sfx) levelUpSfx.current.play();
+    if (level > 1 && sfx && isNaturalLevelUp.current) {
+      levelUpSfx.current.play();
+      isNaturalLevelUp.current = false;
+    }
   }, [level, sfx]);
 
   useEffect(() => {
@@ -108,11 +113,18 @@ export default function App() {
     img.src = `https://robohash.org/${enemyId + 1}?size=350x350`;
   }, [enemyId]);
 
+  const [bgUrl, setBgUrl] = useState(() => getBackground(1));
+  const [bgVisible, setBgVisible] = useState(true);
+
   useEffect(() => {
-    document.body.style.backgroundImage = `url(${getBackground(level)})`;
-    document.body.style.backgroundSize = 'auto 90%';
-    document.body.style.backgroundRepeat = 'no-repeat';
-    document.body.style.backgroundPosition = 'top center';
+    const next = getBackground(level);
+    if (next === bgUrl) return;
+    setBgVisible(false);
+    const t = setTimeout(() => {
+      setBgUrl(next);
+      setBgVisible(true);
+    }, 400);
+    return () => clearTimeout(t);
   }, [level]);
 
   useEffect(() => {
@@ -131,7 +143,12 @@ export default function App() {
       const willLevelUp = exp + expGain >= 100;
       setExp(willLevelUp ? 0 : exp + expGain);
       if (willLevelUp) {
-        setLevel(l => l + 1);
+        isNaturalLevelUp.current = true;
+        setLevel(l => {
+          const newLevel = l + 1;
+          setMaxLevel(m => Math.max(m, newLevel));
+          return newLevel;
+        });
         const levelBonus = level * 10;
         setMoney(m => m + levelBonus);
         setTotalMoneyEarned(t => t + levelBonus);
@@ -141,16 +158,33 @@ export default function App() {
     }
   }, [progress, exp, level, upgrades]);
 
+  const handleLevelSelect = (selectedLevel) => {
+    setLevel(selectedLevel);
+    setProgress(100);
+    setEnemyId(prev => prev + 1);
+  };
+
   if (!started) {
     return <StartScreen onStart={handleStart} />;
   }
 
   return (
     <div className="container">
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundImage: `url(${bgUrl})`,
+        backgroundSize: 'auto 90%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'top center',
+        opacity: bgVisible ? 1 : 0,
+        transition: 'opacity 0.4s ease',
+        zIndex: -1,
+      }} />
       <div className="stats">
         <Exp exp={exp} />
         <div>
-          <Level level={level} />
+          <Level level={level} maxLevel={maxLevel} onLevelSelect={handleLevelSelect} />
         </div>
         <div className="level">
           <h3>LEVEL</h3>
@@ -160,7 +194,7 @@ export default function App() {
           <Clicks clickCount={autoClickCount} />
         </div>
       </div>
-      <div>
+      <div style={{ opacity: bgVisible ? 1 : 0, transition: 'opacity 0.4s ease' }}>
         <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} level={level} />
         <Progress progress={progress} level={level} />
       </div>

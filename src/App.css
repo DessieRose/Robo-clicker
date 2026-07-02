@@ -148,6 +148,53 @@ body {
   text-shadow: 1px 1px 2px var(--shadow);
 }
 
+/* Level dropdown */
+
+.level-dropdown {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55px;
+  max-height: 220px;
+  overflow-y: auto;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 2px 4px 12px var(--shadow);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+}
+
+.level-dropdown-item {
+  width: 100%;
+  min-height: 44px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: "Andika", sans-serif;
+  font-size: 16px;
+  color: #000;
+  text-align: center;
+  touch-action: manipulation;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.level-dropdown-item:active,
+.level-dropdown-item:hover {
+  background-color: var(--pale-peach);
+  color: var(--white);
+}
+
+.level-dropdown-item.active {
+  background-color: var(--pale-peach);
+  color: var(--white);
+  font-weight: 700;
+}
+
 /* Robot CSS */
 
 .enemies {
