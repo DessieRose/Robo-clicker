@@ -1,5 +1,5 @@
 import React from "react";
-import { getEnemyMaxHp } from "../gameFormulas.js";
+import { getEnemyMaxHp, formatHp } from "../gameFormulas.js";
 
 const Progress = ({ progress, level }) => {
     const maxHp = getEnemyMaxHp(level);
@@ -18,7 +18,7 @@ const Progress = ({ progress, level }) => {
     return (
         <div className="container">
             <div className="progress-bar">
-                <div className="progress_lable">{currentHp} / {Math.round(maxHp)}</div>
+                <div className="progress_lable">{formatHp(currentHp)} / {formatHp(Math.round(maxHp))}</div>
                     <div className="progress-bar_fill" style={{width: `${progress}%`, backgroundColor: getColor()}}></div>
             </div>
         </div>

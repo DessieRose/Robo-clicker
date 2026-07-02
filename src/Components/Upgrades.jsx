@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { IoInformationCircle } from "react-icons/io5";
 import UpgradeCard, { getUpgradePrice } from "./UpgradeCard";
-import AutoUpgradeCard from "./AutoUpgradeCard";
+import AutoUpgradeCard, { Stages } from "./AutoUpgradeCard";
 import "./upgrade.css";
 
 import strengthIcon from "../Images/strength-icon.png";
@@ -49,7 +49,11 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
 
   const hasAffordableUpgrade =
     Object.entries(upgrades).some(([key, u]) => u.level !== 'MAX' && money >= getUpgradePrice(key, u.level)) ||
-    Object.values(autoUpgrades).some(u => u.stage < 5 && money >= 200 + u.stage * 100);
+    Object.entries(autoUpgrades).some(([key, u]) => {
+      const stageData = Stages.find(s => s.upgradeName.toLowerCase() === key);
+      const nextStage = stageData?.stages.find(s => s.stage === u.stage + 1);
+      return nextStage && money >= nextStage.price;
+    });
 
   return (
     <>
@@ -117,10 +121,10 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
               <span className={`info-chevron ${isInfoOpen ? 'open' : ''}`}>▾</span>
             </button>
             <ul className={`information-list ${isInfoOpen ? 'open' : ''}`}>
-              <li><strong>Strength</strong>: +3 click damage per level.</li>
-              <li><strong>Luck</strong>: +50% kill reward per level (up to ×3 at max).</li>
-              <li><strong>Attack damage</strong>: +20% damage multiplier per level.</li>
-              <li><strong>Critical damage</strong>: +12% critical hit chance per level.</li>
+              <li><strong>Strength</strong>: +5 click damage per level.</li>
+              <li><strong>Luck</strong>: +60% kill reward per level (up to ×4 at max).</li>
+              <li><strong>Attack damage</strong>: +40% damage multiplier per level.</li>
+              <li><strong>Critical damage</strong>: +15% critical hit chance per level.</li>
             </ul>
           </div>
         </>}

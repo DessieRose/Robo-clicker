@@ -10,13 +10,20 @@ import BgAlienWorld from './Images/bg/alien_world.png';
 import BgLavaPlanet from './Images/bg/lava_planet.png';
 
 
-export const getEnemyMaxHp = (level) => Math.round(50 * Math.pow(1.6, level - 1));
+export const getEnemyMaxHp = (level) => Math.round(50 * Math.pow(1.3, level - 1));
+
+export const formatHp = (n) => {
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (n >= 1_000_000)     return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1_000)         return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return String(n);
+};
 
 const UPGRADE_PRICES = {
-    strength:       [30,  60,  100, 150, 220],
-    luck:           [80, 150, 250, 400, 600],
-    attackDamage:   [60,  120, 200, 320, 500],
-    criticalDamage: [50,  100, 160, 250, 380],
+    strength:       [120,  280,  560, 1100, 2000],
+    luck:           [350,  800, 1600, 3200, 6000],
+    attackDamage:   [250,  600, 1200, 2400, 4500],
+    criticalDamage: [200,  480,  960, 1900, 3600],
 };
 
 export const getUpgradePrice = (key, level) => {
@@ -31,14 +38,13 @@ const getUpgradeTier = (upgrade) => {
     return (level - 1) * 5 + progress / 20;
 };
 
-export const getStrengthBonus = (upgrade) => getUpgradeTier(upgrade) * 0.6;
-export const getAttackMultiplier = (upgrade) => 1 + getUpgradeTier(upgrade) * 0.04;
-export const getCritChance = (upgrade) => getUpgradeTier(upgrade) * 0.024;
-export const getLuckMultiplier = (upgrade) => 1 + getUpgradeTier(upgrade) * 0.1;
+export const getStrengthBonus = (upgrade) => getUpgradeTier(upgrade) * 1.0;
+export const getAttackMultiplier = (upgrade) => 1 + getUpgradeTier(upgrade) * 0.08;
+export const getCritChance = (upgrade) => getUpgradeTier(upgrade) * 0.03;
+export const getLuckMultiplier = (upgrade) => 1 + getUpgradeTier(upgrade) * 0.12;
 
 export const getKillReward = (level, upgrades) => {
-    const effectiveDamage = (1 + getStrengthBonus(upgrades.strength)) * getAttackMultiplier(upgrades.attackDamage);
-    return Math.round(level * 20 * effectiveDamage * getLuckMultiplier(upgrades.luck));
+    return Math.round(level * 12 * getLuckMultiplier(upgrades.luck));
 };
 
 export const getExpGain = (level, luckMultiplier) => Math.max(1, Math.floor(level + 50 * luckMultiplier));
