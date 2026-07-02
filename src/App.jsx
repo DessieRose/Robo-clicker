@@ -14,7 +14,7 @@ import backgroundMusic from './music/background-music.mp3';
 import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
 import AchievementSound from './music/achievement.mp3';
-import { getEnemyMaxHp, getStrengthBonus, getAttackMultiplier, getCritChance, getLuckMultiplier, getKillReward, getExpGain } from './gameFormulas.js';
+import { getEnemyMaxHp, getStrengthBonus, getAttackMultiplier, getCritChance, getLuckMultiplier, getKillReward, getExpGain, getBackground } from './gameFormulas.js';
 import './App.css';
 
 export default function App() {
@@ -109,6 +109,13 @@ export default function App() {
   }, [enemyId]);
 
   useEffect(() => {
+    document.body.style.backgroundImage = `url(${getBackground(level)})`;
+    document.body.style.backgroundSize = 'auto 90%';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundPosition = 'top center';
+  }, [level]);
+
+  useEffect(() => {
     if (progress <= 0) {
       if (killProcessed.current) return;
       killProcessed.current = true;
@@ -140,17 +147,18 @@ export default function App() {
 
   return (
     <div className="container">
-
-      <Exp exp={exp} />
-      <div>
-        <Level level={level} />
-      </div>
-      <div className="level">
-        <h3>LEVEL</h3>
-      </div>
-      <Money money={money} />
-      <div>
-        <Clicks clickCount={autoClickCount} />
+      <div className="stats">
+        <Exp exp={exp} />
+        <div>
+          <Level level={level} />
+        </div>
+        <div className="level">
+          <h3>LEVEL</h3>
+        </div>
+        <Money money={money} />
+        <div>
+          <Clicks clickCount={autoClickCount} />
+        </div>
       </div>
       <div>
         <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} level={level} />
