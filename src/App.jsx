@@ -14,7 +14,7 @@ import backgroundMusic from './music/background-music.mp3';
 import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
 import AchievementSound from './music/achievement.mp3';
-import { getEnemyMaxHp } from './gameFormulas.js';
+import { getEnemyMaxHp, getStrengthBonus, getAttackMultiplier, getCritChance, getLuckMultiplier, getKillReward, getExpGain } from './gameFormulas.js';
 import './App.css';
 
 export default function App() {
@@ -66,28 +66,14 @@ export default function App() {
   });
 
   const handleAttack = (baseDamage = 1) => {
-    const newCount = clickCount + 1;
-    setClickCount(newCount);
+    setClickCount(c => c + 1);
 
-    const strengthLevel = upgrades.strength.level === 'MAX' ? 5 : upgrades.strength.level;
-    const strengthProgress = upgrades.strength.level === 'MAX' ? 0 : upgrades.strength.progress;
-    const totalStrengthUpgrades = (strengthLevel - 1) * 5 + strengthProgress / 20;
-    const strengthBonus = totalStrengthUpgrades * 0.6;
+    const strengthBonus = getStrengthBonus(upgrades.strength);
+    const attackMultiplier = getAttackMultiplier(upgrades.attackDamage);
+    const critBonus = Math.random() < getCritChance(upgrades.criticalDamage) ? baseDamage * 0.5 : 0;
 
-    const attackLevel = upgrades.attackDamage.level === 'MAX' ? 5 : upgrades.attackDamage.level;
-    const attackProgress = upgrades.attackDamage.level === 'MAX' ? 0 : upgrades.attackDamage.progress;
-    const totalAttackUpgrades = (attackLevel - 1) * 5 + attackProgress / 20;
-    const attackMultiplier = 1 + totalAttackUpgrades * 0.04;
-
-    const critLevel = upgrades.criticalDamage.level === 'MAX' ? 5 : upgrades.criticalDamage.level;
-    const critProgress = upgrades.criticalDamage.level === 'MAX' ? 0 : upgrades.criticalDamage.progress;
-    const totalCritUpgrades = (critLevel - 1) * 5 + critProgress / 20;
-    const critChance = totalCritUpgrades * 0.024;
-    const critBonus = Math.random() < critChance ? baseDamage * 0.5 : 0;
-
-    const enemyMaxHp = getEnemyMaxHp(level);
     const totalDamage = (baseDamage + strengthBonus + critBonus) * attackMultiplier;
-    setProgress(prev => prev - (totalDamage / enemyMaxHp) * 100);
+    setProgress(prev => prev - (totalDamage / getEnemyMaxHp(level)) * 100);
   };
 
   const handleAttackRef = useRef(handleAttack);
@@ -126,31 +112,15 @@ export default function App() {
     if (progress <= 0) {
       if (killProcessed.current) return;
       killProcessed.current = true;
-      const luckLevel = upgrades.luck.level === 'MAX' ? 5 : upgrades.luck.level;
-      const luckProgress = upgrades.luck.level === 'MAX' ? 0 : upgrades.luck.progress;
-      const totalLuckUpgrades = (luckLevel - 1) * 5 + luckProgress / 20;
-      const luckMultiplier = 1 + totalLuckUpgrades * 0.1;
 
-      const strengthLevel = upgrades.strength.level === 'MAX' ? 5 : upgrades.strength.level;
-      const strengthProgress = upgrades.strength.level === 'MAX' ? 0 : upgrades.strength.progress;
-      const totalStrengthUpgrades = (strengthLevel - 1) * 5 + strengthProgress / 20;
-      const strengthBonus = totalStrengthUpgrades * 0.6;
-
-      const attackLevel = upgrades.attackDamage.level === 'MAX' ? 5 : upgrades.attackDamage.level;
-      const attackProgress = upgrades.attackDamage.level === 'MAX' ? 0 : upgrades.attackDamage.progress;
-      const totalAttackUpgrades = (attackLevel - 1) * 5 + attackProgress / 20;
-      const attackMultiplier = 1 + totalAttackUpgrades * 0.04;
-
-      const effectiveDamage = (1 + strengthBonus) * attackMultiplier;
-      const killReward = Math.round(level * 20 * effectiveDamage * luckMultiplier);
-
+      const killReward = getKillReward(level, upgrades);
       setMoney(m => m + killReward);
       setTotalMoneyEarned(t => t + killReward);
 
       setEnemyId(prev => prev + 1);
       setProgress(100);
       setEnemiesDefeated(prev => prev + 1);
-      const expGain = Math.max(1, Math.floor(level + 50 * luckMultiplier));
+      const expGain = getExpGain(level, getLuckMultiplier(upgrades.luck));
       const willLevelUp = exp + expGain >= 100;
       setExp(willLevelUp ? 0 : exp + expGain);
       if (willLevelUp) {
