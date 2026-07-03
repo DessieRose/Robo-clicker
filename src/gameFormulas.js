@@ -20,10 +20,10 @@ export const formatHp = (n) => {
 };
 
 const UPGRADE_PRICES = {
-    strength:       [120,  280,  560, 1100, 2000],
-    luck:           [350,  800, 1600, 3200, 6000],
-    attackDamage:   [250,  600, 1200, 2400, 4500],
+    strength:       [170,  330,  610, 1150, 2050],
     criticalDamage: [200,  480,  960, 1900, 3600],
+    attackDamage:   [250,  600, 1200, 2400, 4500],
+    luck:           [350,  800, 1600, 3200, 6000],
 };
 
 export const getUpgradePrice = (key, level) => {
@@ -44,7 +44,8 @@ export const getCritChance = (upgrade) => getUpgradeTier(upgrade) * 0.03;
 export const getLuckMultiplier = (upgrade) => 1 + getUpgradeTier(upgrade) * 0.12;
 
 export const getKillReward = (level, upgrades) => {
-    return Math.round(level * 12 * getLuckMultiplier(upgrades.luck));
+    const attackMult = getAttackMultiplier(upgrades.attackDamage);
+    return Math.round(level * 7 * getLuckMultiplier(upgrades.luck) * attackMult);
 };
 
 export const getExpGain = (level, luckMultiplier) => Math.max(1, Math.floor(level + 50 * luckMultiplier));

@@ -1,0 +1,108 @@
+/* –– Achievements menu –– */
+.achievements-menu {
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+  }
+  
+  .achievements-menu.open {
+    overflow-y: hidden;
+  }
+  
+  .achievements-menu h3 {
+    display: flex;
+    justify-content: center;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+  }
+  
+  .achievements-grid {
+    display: grid;
+    perspective: 500px;
+    perspective-origin: center center;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+  }
+  
+  /* .achievement-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.7rem;
+    padding: 0.75rem 0.5rem;
+    min-height: 90px;
+    text-align: center;
+    gap: 0.25rem;
+  } */
+  
+  .achievement-card--locked {
+    background-color: var(--light-gray);
+  }
+  
+  .achievement-card--unlocked {
+    background-color: var(--pale-peach);
+  }
+  
+  .achievement-unknown {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+  
+  /* .achievement-icon {
+    /* color: var(--white); *
+    font-size: 2rem;
+  }
+  
+  .achievement-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--white);
+  }
+  
+  .achievement-desc {
+    font-size: 0.6rem;
+    color: var(--white);
+    opacity: 0.85;
+  } */
+  
+/* ── Achievement card flip animation ── */
+.achievement-card {
+    cursor: pointer;
+    position: relative;
+    min-height: 90px;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 0.25rem;
+    padding: 0.75rem 0.5rem;
+    transition: transform 0.45s cubic-bezier(0.4, 0.2, 0.2, 1),
+    z-index 0s linear 0.225s;
+}
+
+.achievement-icon {
+    font-size: 2rem;
+}
+
+.achievement-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--white);
+}
+
+.achievement-desc {
+    font-size: 0.8rem;
+    color: var(--white);
+    /* opacity: 0.85; */
+}

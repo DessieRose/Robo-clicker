@@ -125,7 +125,7 @@ export default function App() {
       setBgVisible(true);
     }, 400);
     return () => clearTimeout(t);
-  }, [level]);
+  }, [level, bgUrl]);
 
   useEffect(() => {
     if (progress <= 0) {

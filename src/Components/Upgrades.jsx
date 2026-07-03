@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
-import { IoInformationCircle } from "react-icons/io5";
+// import { IoInformationCircle } from "react-icons/io5";
 import UpgradeCard, { getUpgradePrice } from "./UpgradeCard";
 import AutoUpgradeCard, { Stages } from "./AutoUpgradeCard";
 import "./upgrade.css";
@@ -12,7 +12,7 @@ import criticalDamageIcon from "../Images/critical-damage-icon.png";
 
 const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAutoUpgrades }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isInfoOpen, setIsInfoOpen] = useState(false);
+  // const [isInfoOpen, setIsInfoOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('combat');
 
   const handleUpgrade = (key) => {
@@ -87,16 +87,16 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
             onUpgrade={() => handleUpgrade('strength')}
             money={money}
           />
-          <UpgradeCard
-            upgradeKey="luck"
-            title="Luck"
-            image={luckIcon}
-            progress={upgrades.luck.progress}
-            level={upgrades.luck.level}
-            onUpgrade={() => handleUpgrade('luck')}
+           <UpgradeCard
+            upgradeKey="criticalDamage"
+            title="Critical damage"
+            image={criticalDamageIcon}
+            progress={upgrades.criticalDamage.progress}
+            level={upgrades.criticalDamage.level}
+            onUpgrade={() => handleUpgrade('criticalDamage')}
             money={money}
           />
-          <UpgradeCard
+           <UpgradeCard
             upgradeKey="attackDamage"
             title="Attack damage"
             image={attackDamageIcon}
@@ -106,15 +106,16 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
             money={money}
           />
           <UpgradeCard
-            upgradeKey="criticalDamage"
-            title="Critical damage"
-            image={criticalDamageIcon}
-            progress={upgrades.criticalDamage.progress}
-            level={upgrades.criticalDamage.level}
-            onUpgrade={() => handleUpgrade('criticalDamage')}
+            upgradeKey="luck"
+            title="Luck"
+            image={luckIcon}
+            progress={upgrades.luck.progress}
+            level={upgrades.luck.level}
+            onUpgrade={() => handleUpgrade('luck')}
             money={money}
           />
-          <div className="information">
+         
+          {/* <div className="information">
             <button className="information-toggle" onClick={() => setIsInfoOpen(o => !o)}>
               <IoInformationCircle className="info-icon" />
               <span>Information</span>
@@ -126,7 +127,7 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
               <li><strong>Attack damage</strong>: +40% damage multiplier per level.</li>
               <li><strong>Critical damage</strong>: +15% critical hit chance per level.</li>
             </ul>
-          </div>
+          </div> */}
         </>}
 
         {activeTab === 'auto' && <>
