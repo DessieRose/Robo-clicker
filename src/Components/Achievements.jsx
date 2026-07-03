@@ -120,8 +120,7 @@ const Achievements = ({ clickCount, enemiesDefeated, totalMoneyEarned, level, au
                     className={`achievement-card achievement-card--back ${isUnlocked ? 'achievement-card--unlocked' : 'achievement-card--locked'}`}
                     onClick={() => setFlippedId(null)}
                   >
-                    <span className="achievement-icon">{isUnlocked ? a.icon : <TfiLock />}</span>
-                    <span className="achievement-name">{isUnlocked ? a.name : ''}</span>
+                    <span className="achievement-icon-back">{isUnlocked ? a.icon : <TfiLock />}</span>
                     <span className="achievement-desc">{a.description}</span>
                   </div>
                 </ReactCardFlip>
