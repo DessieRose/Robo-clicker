@@ -1,4 +1,4 @@
-import { useEffect, useCallback, use } from "react";
+import { useEffect, useCallback } from "react";
 
 const SAVE_KEY = "robotGameSave";
 const SAVE_VERSION = 1;
@@ -44,7 +44,7 @@ export const useGameSave = (gameState) => {
     }, [save]);
 
     // Save on level up
-    useEffect(() => { save(); }, [level]);
+    useEffect(() => { save(); }, [level, save]);
 
     return save;
 };

@@ -73,10 +73,6 @@ const Achievements = ({ clickCount, enemiesDefeated, totalMoneyEarned, level, au
     setFlippedId(null); // reset any flipped card when closing
   };
  
-  const handleCardClick = (id) => {
-    setFlippedId(prev => prev === id ? null : id);
-  };
- 
   return (
     <>
       <div
