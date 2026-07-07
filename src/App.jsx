@@ -15,24 +15,64 @@ import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
 import AchievementSound from './music/achievement.mp3';
 import { getEnemyMaxHp, getStrengthBonus, getAttackMultiplier, getCritChance, getLuckMultiplier, getKillReward, getExpGain, getBackground } from './gameFormulas.js';
+import { loadGame, useGameSave } from './hooks/useGameSave';
 import './App.css';
 
-export default function App() {
-  const [started, setStarted] = useState(false);
-  const [music, setMusic] = useState(true);
-  const [sfx, setSfx] = useState(true);
-  const bgMusic = useRef(new Audio(backgroundMusic));
-  const levelUpSfx = useRef(new Audio(LevelUpSound));
-  const metalTapSfx = useRef(new Audio(MetalTap));
-  const achievementSfx = useRef(new Audio(AchievementSound));
-  const killProcessed = useRef(false);
+// Called once outside the component so it doesn't re-run on every render
+const initialSave = loadGame();
 
-  levelUpSfx.current.volume = 0.2;
-  metalTapSfx.current.volume = 0.2;
+export default function App() {
+  // ── Audio refs ──
+  const bgMusic        = useRef(new Audio(backgroundMusic));
+  const levelUpSfx     = useRef(new Audio(LevelUpSound));
+  const metalTapSfx    = useRef(new Audio(MetalTap));
+  const achievementSfx = useRef(new Audio(AchievementSound));
+  const killProcessed    = useRef(false);
+  const isNaturalLevelUp = useRef(false);
+  const hasInteracted    = useRef(false);
+
+  levelUpSfx.current.volume     = 0.2;
+  metalTapSfx.current.volume    = 0.2;
   achievementSfx.current.volume = 0.2;
 
+  // ── UI state ──
+  const [started, setStarted] = useState(false);
+  const [music,   setMusic]   = useState(true);
+  const [sfx,     setSfx]     = useState(true);
+
+  // ── Saved state (loaded from localStorage on first load) ──
+  const [level,            setLevel]            = useState(initialSave?.level            ?? 1);
+  const [maxLevel,         setMaxLevel]         = useState(initialSave?.maxLevel         ?? 1);
+  const [money,            setMoney]            = useState(initialSave?.money            ?? 0);
+  const [totalMoneyEarned, setTotalMoneyEarned] = useState(initialSave?.totalMoneyEarned ?? 0);
+  const [exp,              setExp]              = useState(initialSave?.exp              ?? 0);
+  const [enemiesDefeated,  setEnemiesDefeated]  = useState(initialSave?.enemiesDefeated  ?? 0);
+  const [clickCount,       setClickCount]       = useState(initialSave?.clickCount       ?? 0);
+  const [upgrades,         setUpgrades]         = useState(initialSave?.upgrades ?? {
+    strength:       { level: 1, progress: 0 },
+    luck:           { level: 1, progress: 0 },
+    attackDamage:   { level: 1, progress: 0 },
+    criticalDamage: { level: 1, progress: 0 },
+  });
+  const [autoUpgrades, setAutoUpgrades] = useState(initialSave?.autoUpgrades ?? {
+    drone:  { stage: 0 },
+    turret: { stage: 0 },
+    robot:  { stage: 0 },
+  });
+
+  // ── Session-only state (not persisted) ──
+  const [autoClickCount, setAutoClickCount] = useState(0);
+  const [progress,       setProgress]       = useState(100);
+  const [enemyId,        setEnemyId]        = useState(Math.floor(Math.random() + 1));
+  const [bgUrl,          setBgUrl]          = useState(() => getBackground(initialSave?.level ?? 1));
+  const [bgVisible,      setBgVisible]      = useState(true);
+
+  // ── Save hook (auto-saves to localStorage) ──
+  useGameSave({ level, maxLevel, money, totalMoneyEarned, exp, enemiesDefeated, clickCount, upgrades, autoUpgrades });
+
+  // ── Music ──
   const handleStart = () => {
-    bgMusic.current.loop = true;
+    bgMusic.current.loop   = true;
     bgMusic.current.volume = 0.1;
     bgMusic.current.play();
     setStarted(true);
@@ -42,80 +82,8 @@ export default function App() {
     if (!started) return;
     music ? bgMusic.current.play() : bgMusic.current.pause();
   }, [music, started]);
-  const [clickCount, setClickCount] = useState(0);
-  const [autoClickCount, setAutoClickCount] = useState(0);
-  const [progress, setProgress] = useState(100);
-  const [exp, setExp] = useState(0);
-  const [level, setLevel] = useState(1);
-  const [maxLevel, setMaxLevel] = useState(1);
-  const isNaturalLevelUp = useRef(false);
-  const [enemyId, setEnemyId] = useState(Math.floor(Math.random() + 1));
-  const [money, setMoney] = useState(0);
-  const [totalMoneyEarned, setTotalMoneyEarned] = useState(0);
-  const [enemiesDefeated, setEnemiesDefeated] = useState(0);
 
-  const [upgrades, setUpgrades] = useState({
-    strength:       { level: 1, progress: 0 },
-    luck:           { level: 1, progress: 0 },
-    attackDamage:   { level: 1, progress: 0 },
-    criticalDamage: { level: 1, progress: 0 },
-  });
-
-  const [autoUpgrades, setAutoUpgrades] = useState({
-    drone:  { stage: 0 },
-    turret: { stage: 0 },
-    robot:  { stage: 0 },
-  });
-
-  const handleAttack = (baseDamage = 1) => {
-    setClickCount(c => c + 1);
-
-    const strengthBonus = getStrengthBonus(upgrades.strength);
-    const attackMultiplier = getAttackMultiplier(upgrades.attackDamage);
-    const critBonus = Math.random() < getCritChance(upgrades.criticalDamage) ? baseDamage * 0.5 : 0;
-
-    const totalDamage = (baseDamage + strengthBonus + critBonus) * attackMultiplier;
-    setProgress(prev => prev - (totalDamage / getEnemyMaxHp(level)) * 100);
-  };
-
-  const handleAttackRef = useRef(handleAttack);
-  useEffect(() => { handleAttackRef.current = handleAttack; });
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      let autoHits = 0;
-      Object.entries(autoUpgrades).forEach(([key, upgrade]) => {
-        if (upgrade.stage > 0) {
-          const stageData = Stages.find(s => s.upgradeName.toLowerCase() === key);
-          const stageDamage = stageData?.stages.find(s => s.stage === upgrade.stage)?.damage ?? 1;
-          handleAttackRef.current(stageDamage);
-          autoHits++;
-        }
-      });
-      if (autoHits > 0) setAutoClickCount(prev => prev + autoHits);
-    }, 1000);
-    return () => clearInterval(id);
-  }, [autoUpgrades]);
-
-  useEffect(() => {
-    if (level > 1 && sfx && isNaturalLevelUp.current) {
-      levelUpSfx.current.play();
-      isNaturalLevelUp.current = false;
-    }
-  }, [level, sfx]);
-
-  useEffect(() => {
-    if (clickCount > 0 && sfx) metalTapSfx.current.play();
-  }, [clickCount, sfx]);
-
-  useEffect(() => {
-    const img = new Image();
-    img.src = `https://robohash.org/${enemyId + 1}?size=350x350`;
-  }, [enemyId]);
-
-  const [bgUrl, setBgUrl] = useState(() => getBackground(1));
-  const [bgVisible, setBgVisible] = useState(true);
-
+  // ── Background transition on level change ──
   useEffect(() => {
     const next = getBackground(level);
     if (next === bgUrl) return;
@@ -127,6 +95,58 @@ export default function App() {
     return () => clearTimeout(t);
   }, [level, bgUrl]);
 
+  // ── Sound effects ──
+  useEffect(() => {
+    if (level > 1 && sfx && isNaturalLevelUp.current) {
+      levelUpSfx.current.play();
+      isNaturalLevelUp.current = false;
+    }
+  }, [level, sfx]);
+
+  useEffect(() => {
+    if (sfx && hasInteracted.current) metalTapSfx.current.play();
+  }, [clickCount, sfx]);
+
+  // ── Preload next enemy image ──
+  useEffect(() => {
+    const img = new Image();
+    img.src = `https://robohash.org/${enemyId + 1}?size=350x350`;
+  }, [enemyId]);
+
+  // ── Attack handler ──
+  const handleAttack = (baseDamage = 1) => {
+    hasInteracted.current = true;
+    setClickCount(c => c + 1);
+
+    const strengthBonus    = getStrengthBonus(upgrades.strength);
+    const attackMultiplier = getAttackMultiplier(upgrades.attackDamage);
+    const critBonus        = Math.random() < getCritChance(upgrades.criticalDamage) ? baseDamage * 0.5 : 0;
+
+    const totalDamage = (baseDamage + strengthBonus + critBonus) * attackMultiplier;
+    setProgress(prev => prev - (totalDamage / getEnemyMaxHp(level)) * 100);
+  };
+
+  const handleAttackRef = useRef(handleAttack);
+  useEffect(() => { handleAttackRef.current = handleAttack; });
+
+  // ── Auto-attack interval ──
+  useEffect(() => {
+    const id = setInterval(() => {
+      let autoHits = 0;
+      Object.entries(autoUpgrades).forEach(([key, upgrade]) => {
+        if (upgrade.stage > 0) {
+          const stageData   = Stages.find(s => s.upgradeName.toLowerCase() === key);
+          const stageDamage = stageData?.stages.find(s => s.stage === upgrade.stage)?.damage ?? 1;
+          handleAttackRef.current(stageDamage);
+          autoHits++;
+        }
+      });
+      if (autoHits > 0) setAutoClickCount(prev => prev + autoHits);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [autoUpgrades]);
+
+  // ── Kill / level-up logic ──
   useEffect(() => {
     if (progress <= 0) {
       if (killProcessed.current) return;
@@ -139,9 +159,11 @@ export default function App() {
       setEnemyId(prev => prev + 1);
       setProgress(100);
       setEnemiesDefeated(prev => prev + 1);
-      const expGain = getExpGain(level, getLuckMultiplier(upgrades.luck));
+
+      const expGain    = getExpGain(level, getLuckMultiplier(upgrades.luck));
       const willLevelUp = exp + expGain >= 100;
       setExp(willLevelUp ? 0 : exp + expGain);
+
       if (willLevelUp) {
         isNaturalLevelUp.current = true;
         setLevel(l => {
@@ -158,12 +180,14 @@ export default function App() {
     }
   }, [progress, exp, level, upgrades]);
 
+  // ── Level select ──
   const handleLevelSelect = (selectedLevel) => {
     setLevel(selectedLevel);
     setProgress(100);
     setEnemyId(prev => prev + 1);
   };
 
+  // ── Render ──
   if (!started) {
     return <StartScreen onStart={handleStart} />;
   }
@@ -181,6 +205,7 @@ export default function App() {
         transition: 'opacity 0.4s ease',
         zIndex: -1,
       }} />
+
       <div className="stats">
         <Exp exp={exp} />
         <div>
@@ -194,10 +219,12 @@ export default function App() {
           <Clicks clickCount={autoClickCount} />
         </div>
       </div>
+
       <div style={{ opacity: bgVisible ? 1 : 0, transition: 'opacity 0.4s ease' }}>
         <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} level={level} />
         <Progress progress={progress} level={level} />
       </div>
+
       <div className="buttons">
         <Settings music={music} setMusic={setMusic} sfx={sfx} setSfx={setSfx} />
         <Achievements
@@ -209,7 +236,14 @@ export default function App() {
           upgrades={upgrades}
           onUnlock={() => { if (sfx) achievementSfx.current.play(); }}
         />
-        <Upgrades money={money} setMoney={setMoney} upgrades={upgrades} setUpgrades={setUpgrades} autoUpgrades={autoUpgrades} setAutoUpgrades={setAutoUpgrades} />
+        <Upgrades
+          money={money}
+          setMoney={setMoney}
+          upgrades={upgrades}
+          setUpgrades={setUpgrades}
+          autoUpgrades={autoUpgrades}
+          setAutoUpgrades={setAutoUpgrades}
+        />
       </div>
     </div>
   );

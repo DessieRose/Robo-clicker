@@ -95,9 +95,8 @@ const Achievements = ({ clickCount, enemiesDefeated, totalMoneyEarned, level, au
             const isFlipped  = flippedId === a.id;
  
             return (
-              <div>
+              <div key={a.id}>
                 <ReactCardFlip
-                  key={a.id}
                   isFlipped={isFlipped}
                   flipDirection="horizontal"
                   flipSpeedBackToFront={0.5}
