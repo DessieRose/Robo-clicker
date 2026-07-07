@@ -23,56 +23,56 @@ const initialSave = loadGame();
 
 export default function App() {
   // ── Audio refs ──
-  const bgMusic        = useRef(new Audio(backgroundMusic));
-  const levelUpSfx     = useRef(new Audio(LevelUpSound));
-  const metalTapSfx    = useRef(new Audio(MetalTap));
+  const bgMusic = useRef(new Audio(backgroundMusic));
+  const levelUpSfx = useRef(new Audio(LevelUpSound));
+  const metalTapSfx = useRef(new Audio(MetalTap));
   const achievementSfx = useRef(new Audio(AchievementSound));
-  const killProcessed    = useRef(false);
+  const killProcessed = useRef(false);
   const isNaturalLevelUp = useRef(false);
-  const hasInteracted    = useRef(false);
+  const hasInteracted = useRef(false);
 
-  levelUpSfx.current.volume     = 0.2;
-  metalTapSfx.current.volume    = 0.2;
+  levelUpSfx.current.volume = 0.2;
+  metalTapSfx.current.volume = 0.2;
   achievementSfx.current.volume = 0.2;
 
   // ── UI state ──
   const [started, setStarted] = useState(false);
-  const [music,   setMusic]   = useState(true);
-  const [sfx,     setSfx]     = useState(true);
+  const [music, setMusic] = useState(true);
+  const [sfx, setSfx] = useState(true);
 
   // ── Saved state (loaded from localStorage on first load) ──
-  const [level,            setLevel]            = useState(initialSave?.level            ?? 1);
-  const [maxLevel,         setMaxLevel]         = useState(initialSave?.maxLevel         ?? 1);
-  const [money,            setMoney]            = useState(initialSave?.money            ?? 0);
+  const [level, setLevel] = useState(initialSave?.level ?? 1);
+  const [maxLevel, setMaxLevel] = useState(initialSave?.maxLevel ?? 1);
+  const [money, setMoney] = useState(initialSave?.money ?? 0);
   const [totalMoneyEarned, setTotalMoneyEarned] = useState(initialSave?.totalMoneyEarned ?? 0);
-  const [exp,              setExp]              = useState(initialSave?.exp              ?? 0);
-  const [enemiesDefeated,  setEnemiesDefeated]  = useState(initialSave?.enemiesDefeated  ?? 0);
-  const [clickCount,       setClickCount]       = useState(initialSave?.clickCount       ?? 0);
-  const [upgrades,         setUpgrades]         = useState(initialSave?.upgrades ?? {
-    strength:       { level: 1, progress: 0 },
-    luck:           { level: 1, progress: 0 },
-    attackDamage:   { level: 1, progress: 0 },
+  const [exp, setExp] = useState(initialSave?.exp ?? 0);
+  const [enemiesDefeated, setEnemiesDefeated] = useState(initialSave?.enemiesDefeated ?? 0);
+  const [clickCount, setClickCount] = useState(initialSave?.clickCount ?? 0);
+  const [upgrades, setUpgrades] = useState(initialSave?.upgrades ?? {
+    strength: { level: 1, progress: 0 },
+    luck: { level: 1, progress: 0 },
+    attackDamage: { level: 1, progress: 0 },
     criticalDamage: { level: 1, progress: 0 },
   });
   const [autoUpgrades, setAutoUpgrades] = useState(initialSave?.autoUpgrades ?? {
-    drone:  { stage: 0 },
+    drone: { stage: 0 },
     turret: { stage: 0 },
-    robot:  { stage: 0 },
+    robot: { stage: 0 },
   });
 
   // ── Session-only state (not persisted) ──
   const [autoClickCount, setAutoClickCount] = useState(0);
-  const [progress,       setProgress]       = useState(100);
-  const [enemyId,        setEnemyId]        = useState(Math.floor(Math.random() + 1));
-  const [bgUrl,          setBgUrl]          = useState(() => getBackground(initialSave?.level ?? 1));
-  const [bgVisible,      setBgVisible]      = useState(true);
+  const [progress, setProgress] = useState(100);
+  const [enemyId, setEnemyId] = useState(Math.floor(Math.random() + 1));
+  const [bgUrl, setBgUrl] = useState(() => getBackground(initialSave?.level ?? 1));
+  const [bgVisible, setBgVisible] = useState(true);
 
   // ── Save hook (auto-saves to localStorage) ──
   useGameSave({ level, maxLevel, money, totalMoneyEarned, exp, enemiesDefeated, clickCount, upgrades, autoUpgrades });
 
   // ── Music ──
   const handleStart = () => {
-    bgMusic.current.loop   = true;
+    bgMusic.current.loop = true;
     bgMusic.current.volume = 0.1;
     bgMusic.current.play();
     setStarted(true);
@@ -118,9 +118,9 @@ export default function App() {
     hasInteracted.current = true;
     setClickCount(c => c + 1);
 
-    const strengthBonus    = getStrengthBonus(upgrades.strength);
+    const strengthBonus = getStrengthBonus(upgrades.strength);
     const attackMultiplier = getAttackMultiplier(upgrades.attackDamage);
-    const critBonus        = Math.random() < getCritChance(upgrades.criticalDamage) ? baseDamage * 0.5 : 0;
+    const critBonus = Math.random() < getCritChance(upgrades.criticalDamage) ? baseDamage * 0.5 : 0;
 
     const totalDamage = (baseDamage + strengthBonus + critBonus) * attackMultiplier;
     setProgress(prev => prev - (totalDamage / getEnemyMaxHp(level)) * 100);
