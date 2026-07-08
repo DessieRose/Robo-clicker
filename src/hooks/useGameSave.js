@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 
 const SAVE_KEY = "robotGameSave";
 const SAVE_VERSION = 1;
@@ -37,6 +37,9 @@ export const useGameSave = (gameState) => {
         localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
     }, [level, maxLevel, money, totalMoneyEarned, exp, enemiesDefeated, clickCount, upgrades, autoUpgrades]);
 
+    const saveRef = useRef(save);
+    useEffect(() => { saveRef.current = save; });
+
     // Auto-save every 10 seconds
     useEffect(() => {
         const id = setInterval(save, 10000);
@@ -44,7 +47,7 @@ export const useGameSave = (gameState) => {
     }, [save]);
 
     // Save on level up
-    useEffect(() => { save(); }, [level, save]);
+    useEffect(() => { saveRef.current(); }, [level]);
 
     return save;
 };
