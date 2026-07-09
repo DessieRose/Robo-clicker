@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@supabase/supabase-js": "^2.110.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
@@ -19,6 +20,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "dev": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -27,6 +29,12 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "overrides": {
+    "react-card-flip": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
   },
   "browserslist": {
     "production": [

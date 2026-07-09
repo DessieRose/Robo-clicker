@@ -15,13 +15,33 @@ import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
 import AchievementSound from './music/achievement.mp3';
 import { getEnemyMaxHp, getStrengthBonus, getAttackMultiplier, getCritChance, getLuckMultiplier, getKillReward, getExpGain, getBackground } from './gameFormulas.js';
-import { loadGame, useGameSave } from './hooks/useGameSave';
+import { loadGame, loadFromSupabase, useGameSave } from './hooks/useGameSave';
+import { useAuth } from './hooks/useAuth.js';
 import './App.css';
 
+// ── Default state values ──
+const DEFAULT_UPGRADES = {
+  strength:       { level: 1, progress: 0 },
+  luck:           { level: 1, progress: 0 },
+  attackDamage:   { level: 1, progress: 0 },
+  criticalDamage: { level: 1, progress: 0 },
+};
+ 
+const DEFAULT_AUTO_UPGRADES = {
+  drone:  { stage: 0 },
+  turret: { stage: 0 },
+  robot:  { stage: 0 },
+};
+
 // Called once outside the component so it doesn't re-run on every render
-const initialSave = loadGame();
+// const initialSave = loadGame();
 
 export default function App() {
+  // –– Auth ––
+  const { user, authLoading, signUp, signIn } = useAuth();
+  const [playAsGuest, setPlayAsGuest] = useState(false);
+  const [saveLoaded, setSaveLoaded] = useState(false);
+
   // ── Audio refs ──
   const bgMusic = useRef(new Audio(backgroundMusic));
   const levelUpSfx = useRef(new Audio(LevelUpSound));
@@ -30,6 +50,7 @@ export default function App() {
   const killProcessed = useRef(false);
   const isNaturalLevelUp = useRef(false);
   const hasInteracted = useRef(false);
+  const prevClickCount = useRef(0);
 
   levelUpSfx.current.volume = 0.2;
   metalTapSfx.current.volume = 0.2;
@@ -40,47 +61,105 @@ export default function App() {
   const [music, setMusic] = useState(true);
   const [sfx, setSfx] = useState(true);
 
-  // ── Saved state (loaded from localStorage on first load) ──
-  const [level, setLevel] = useState(initialSave?.level ?? 1);
-  const [maxLevel, setMaxLevel] = useState(initialSave?.maxLevel ?? 1);
-  const [money, setMoney] = useState(initialSave?.money ?? 0);
-  const [totalMoneyEarned, setTotalMoneyEarned] = useState(initialSave?.totalMoneyEarned ?? 0);
-  const [exp, setExp] = useState(initialSave?.exp ?? 0);
-  const [enemiesDefeated, setEnemiesDefeated] = useState(initialSave?.enemiesDefeated ?? 0);
-  const [clickCount, setClickCount] = useState(initialSave?.clickCount ?? 0);
-  const [upgrades, setUpgrades] = useState(initialSave?.upgrades ?? {
-    strength: { level: 1, progress: 0 },
-    luck: { level: 1, progress: 0 },
-    attackDamage: { level: 1, progress: 0 },
-    criticalDamage: { level: 1, progress: 0 },
-  });
-  const [autoUpgrades, setAutoUpgrades] = useState(initialSave?.autoUpgrades ?? {
-    drone: { stage: 0 },
-    turret: { stage: 0 },
-    robot: { stage: 0 },
-  });
+  // ── Game state (defaults — overwritten after save loads) ──
+  const [level, setLevel] = useState(1);
+  const [maxLevel, setMaxLevel] = useState(1);
+  const [money, setMoney] = useState(0);
+  const [totalMoneyEarned, setTotalMoneyEarned] = useState(0);
+  const [exp, setExp] = useState(0);
+  const [enemiesDefeated, setEnemiesDefeated] = useState(0);
+  const [clickCount, setClickCount] = useState(0);
+  const [upgrades, setUpgrades] = useState(DEFAULT_UPGRADES);
+  const [autoUpgrades, setAutoUpgrades] = useState(DEFAULT_AUTO_UPGRADES);
 
-  // ── Session-only state (not persisted) ──
+  // ── Session-only state (never saved) ──
   const [autoClickCount, setAutoClickCount] = useState(0);
   const [progress, setProgress] = useState(100);
   const [enemyId, setEnemyId] = useState(Math.floor(Math.random() + 1));
-  const [bgUrl, setBgUrl] = useState(() => getBackground(initialSave?.level ?? 1));
+  const [bgUrl, setBgUrl] = useState(() => getBackground(1));
   const [bgVisible, setBgVisible] = useState(true);
 
-  // ── Save hook (auto-saves to localStorage) ──
-  useGameSave({ level, maxLevel, money, totalMoneyEarned, exp, enemiesDefeated, clickCount, upgrades, autoUpgrades });
+  // ── Save hook (must be called before any early returns) ──
+  useGameSave(
+    { level, maxLevel, money, totalMoneyEarned, exp, enemiesDefeated, clickCount, upgrades, autoUpgrades },
+    user,
+    saveLoaded 
+  );
 
-  // ── Music ──
-  const handleStart = () => {
+  // ── Auto-start for returning logged-in users ──
+  useEffect(() => {
+    if (user && saveLoaded && !started) {
+      setStarted(true);
+    }
+  }, [user, saveLoaded, started]);
+
+  // ── Load save after auth is ready ──
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user && !playAsGuest) return;
+    setSaveLoaded(false);
+
+    const initSave = async () => {
+      let save = null;
+      if (user) {
+        const [remote, local] = await Promise.all([
+        loadFromSupabase(user.id),
+        Promise.resolve(loadGame()),
+        ]);
+        if (remote && local) {
+          save = (remote.savedAt ?? 0) >= (local.savedAt ?? 0) ? remote : local;
+        } else {
+          save = remote ?? local;
+        }
+      } else {
+        save = loadGame();
+      }
+      
+      if (save) {
+        setLevel(save.level ?? 1);
+        setMaxLevel(save.maxLevel ?? 1);
+        setMoney(save.money ?? 0);
+        setTotalMoneyEarned(save.totalMoneyEarned ?? 0);
+        setExp(save.exp ?? 0);
+        setEnemiesDefeated(save.enemiesDefeated ?? 0);
+        setClickCount(save.clickCount ?? 0);
+        setUpgrades(save.upgrades ?? DEFAULT_UPGRADES);
+        setAutoUpgrades(save.autoUpgrades ?? DEFAULT_AUTO_UPGRADES);
+        setBgUrl(getBackground(save.level ?? 1));
+      }
+
+      setSaveLoaded(true);
+    };
+
+    initSave();
+  }, [user, authLoading, playAsGuest]);
+
+  // ── Start game (plays music, marks started) ──
+  const startGame = () => {
     bgMusic.current.loop = true;
     bgMusic.current.volume = 0.1;
-    bgMusic.current.play();
+    bgMusic.current.play().catch(() => {});
     setStarted(true);
+  };
+
+  const handleGuest = () => {
+    setPlayAsGuest(true);
+    startGame();
+  };
+
+  const handleLogin = async (email, password) => {
+    await signIn(email, password);
+    startGame();
+  };
+
+  const handleSignUp = async (email, password) => {
+    await signUp(email, password);
+    startGame();
   };
 
   useEffect(() => {
     if (!started) return;
-    music ? bgMusic.current.play() : bgMusic.current.pause();
+    music ? bgMusic.current.play().catch(() => {}) : bgMusic.current.pause();
   }, [music, started]);
 
   // ── Background transition on level change ──
@@ -98,14 +177,17 @@ export default function App() {
   // ── Sound effects ──
   useEffect(() => {
     if (level > 1 && sfx && isNaturalLevelUp.current) {
-      levelUpSfx.current.play();
+      levelUpSfx.current.play().catch(() => {});
       isNaturalLevelUp.current = false;
     }
   }, [level, sfx]);
 
   useEffect(() => {
-    if (sfx && hasInteracted.current) metalTapSfx.current.play();
-  }, [clickCount, sfx]);
+    if (clickCount > prevClickCount.current && sfx && started) {
+      metalTapSfx.current.play().catch(() => {});
+    }
+    prevClickCount.current = clickCount;
+  }, [clickCount, sfx, started]);
 
   // ── Preload next enemy image ──
   useEffect(() => {
@@ -188,8 +270,24 @@ export default function App() {
   };
 
   // ── Render ──
+  if (authLoading) {
+    return <div className="loading-screen">Loading…</div>;
+  }
+
+  if ((user || playAsGuest) && !saveLoaded) {
+    return <div className="loading-screen">Loading save…</div>;
+  }
+
   if (!started) {
-    return <StartScreen onStart={handleStart} />;
+    return (
+      <StartScreen
+        user={user}
+        onStart={startGame}
+        onGuest={handleGuest}
+        onLogin={handleLogin}
+        onSignUp={handleSignUp}
+      />
+    );
   }
 
   return (
@@ -234,7 +332,7 @@ export default function App() {
           level={level}
           autoUpgrades={autoUpgrades}
           upgrades={upgrades}
-          onUnlock={() => { if (sfx) achievementSfx.current.play(); }}
+          onUnlock={() => { if (sfx) achievementSfx.current.play().catch(() => {}); }}
         />
         <Upgrades
           money={money}

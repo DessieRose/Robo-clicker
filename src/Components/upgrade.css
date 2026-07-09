@@ -238,3 +238,30 @@
   transform: translateX(22px);
 }
 
+.settings-username {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark-gray);
+  margin: 0.5rem 1rem 0;
+  text-align: center;
+}
+
+.signout-btn {
+  display: flex;
+  justify-content: center;
+  background-color: var(--dark-pale-red);
+  border: none;
+  width: 93%;
+  color: var(--white);
+  padding: 1rem;
+  font-size: 1.2rem;
+  border-radius: 1rem;
+  margin: 0.5rem 1rem 0;
+  flex-shrink: 0;
+  transition: opacity 0.15s ease;
+}
+
+.signout-btn:active {
+  opacity: 0.8;
+}
+

@@ -49,6 +49,7 @@ const Achievements = ({ clickCount, enemiesDefeated, totalMoneyEarned, level, au
   const [isOpen, setIsOpen]       = useState(false);
   const [flippedId, setFlippedId] = useState(null);   // ← which card is flipped
   const onUnlockRef = useRef(onUnlock);
+  const isInitialMount = useRef(true);
   useEffect(() => { onUnlockRef.current = onUnlock; });
  
   // Check for newly unlocked achievements
@@ -57,14 +58,18 @@ const Achievements = ({ clickCount, enemiesDefeated, totalMoneyEarned, level, au
     const newIds = ACHIEVEMENTS
       .filter(a => !unlocked.has(a.id) && a.condition(state))
       .map(a => a.id);
+
     if (newIds.length > 0) {
       setUnlocked(prev => {
         const next = new Set(prev);
         newIds.forEach(id => next.add(id));
         return next;
       });
-      onUnlockRef.current?.();
+      if (!isInitialMount.current) {
+        onUnlockRef.current?.();
+      }
     }
+    isInitialMount.current = false;
   }, [clickCount, enemiesDefeated, totalMoneyEarned, level, autoUpgrades, upgrades, unlocked]);
  
   const handleOpen = () => {
