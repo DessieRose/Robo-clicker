@@ -1,13 +1,13 @@
-import BgGrassland from './Images/bg/grassland.png';
-import BgDarkForest from './Images/bg/dark_forest.png';
-import BgDesert from './Images/bg/desert.png';
-import BgMountains from './Images/bg/mountains.png';
-import BgStorm from './Images/bg/storm.png';
-import BgCave from './Images/bg/cave.png';
-import BgVolcanic from './Images/bg/volcanic.png';
-import BgDeadPlanet from './Images/bg/dead_planet.png';
-import BgAlienWorld from './Images/bg/alien_world.png';
-import BgLavaPlanet from './Images/bg/lava_planet.png';
+import BgGrassland from './Images/bg/grassland.webp';
+import BgDarkForest from './Images/bg/dark_forest.webp';
+import BgDesert from './Images/bg/desert.webp';
+import BgMountains from './Images/bg/mountains.webp';
+import BgStorm from './Images/bg/storm.webp';
+import BgCave from './Images/bg/cave.webp';
+import BgVolcanic from './Images/bg/volcanic.webp';
+import BgDeadPlanet from './Images/bg/dead_planet.webp';
+import BgAlienWorld from './Images/bg/alien_world.webp';
+import BgLavaPlanet from './Images/bg/lava_planet.webp';
 
 
 export const getEnemyMaxHp = (level) => Math.round(50 * Math.pow(1.3, level - 1));

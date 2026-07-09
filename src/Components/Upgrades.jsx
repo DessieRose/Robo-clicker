@@ -5,10 +5,10 @@ import UpgradeCard, { getUpgradePrice } from "./UpgradeCard";
 import AutoUpgradeCard, { Stages } from "./AutoUpgradeCard";
 import "./upgrade.css";
 
-import strengthIcon from "../Images/strength-icon.png";
-import luckIcon from "../Images/luck-icon.png";
-import attackDamageIcon from "../Images/attack-damage-icon.png";
-import criticalDamageIcon from "../Images/critical-damage-icon.png";
+import strengthIcon from "../Images/icons/strength-icon.webp";
+import luckIcon from "../Images/icons/luck-icon.webp";
+import attackDamageIcon from "../Images/icons/attack-damage-icon.webp";
+import criticalDamageIcon from "../Images/icons/critical-damage-icon.webp";
 
 const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAutoUpgrades }) => {
   const [isOpen, setIsOpen] = useState(false);

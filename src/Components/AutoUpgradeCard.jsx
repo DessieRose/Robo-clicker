@@ -1,20 +1,20 @@
-import scrapDroneImage from "../Images/auto/drone/scrap-drone.png";
-import tinyDroneImage from "../Images/auto/drone/tiny-drone.png";
-import largeDroneImage from "../Images/auto/drone/large-drone.png";
-import militaryDroneImage from "../Images/auto/drone/military-drone.png";
-import battleDroneImage from "../Images/auto/drone/battle-drone.png";
+import scrapDroneImage from "../Images/auto/drone/scrap-drone.webp";
+import tinyDroneImage from "../Images/auto/drone/tiny-drone.webp";
+import largeDroneImage from "../Images/auto/drone/large-drone.webp";
+import militaryDroneImage from "../Images/auto/drone/military-drone.webp";
+import battleDroneImage from "../Images/auto/drone/battle-drone.webp";
 
-import smallTurretImage from "../Images/auto/turret/small-turret.png";
-import largeTurretImage from "../Images/auto/turret/large-turret.png";
-import laserTurretImage from "../Images/auto/turret/laser-turret.png";
-import missileTurretImage from "../Images/auto/turret/missile-turret.png";
-import plasmaTurretImage from "../Images/auto/turret/plasma-turret.png";
+import smallTurretImage from "../Images/auto/turret/small-turret.webp";
+import largeTurretImage from "../Images/auto/turret/large-turret.webp";
+import laserTurretImage from "../Images/auto/turret/laser-turret.webp";
+import missileTurretImage from "../Images/auto/turret/missile-turret.webp";
+import plasmaTurretImage from "../Images/auto/turret/plasma-turret.webp";
 
-import robotArmImage from "../Images/auto/robot/robot-arm.png";
-import robotFriendImage from "../Images/auto/robot/robot-friend.png";
-import robotCopImage from "../Images/auto/robot/robot-cop.png";
-import militaryRobotImage from "../Images/auto/robot/military-robot.png";
-import robotArnoldImage from "../Images/auto/robot/robot-cyborg.png";
+import robotArmImage from "../Images/auto/robot/robot-arm.webp";
+import robotFriendImage from "../Images/auto/robot/robot-friend.webp";
+import robotCopImage from "../Images/auto/robot/robot-cop.webp";
+import militaryRobotImage from "../Images/auto/robot/military-robot.webp";
+import robotArnoldImage from "../Images/auto/robot/robot-cyborg.webp";
 
 export const Stages = [
     {
