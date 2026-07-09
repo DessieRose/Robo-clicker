@@ -211,7 +211,8 @@ body {
   position: absolute;
   width: 343px;
   height: 46px;
-  top: 530px;
+  /* top: 530px; */
+  bottom: 15.5rem;
   left: 45px;
   border-radius: 22px;
   background-color: var(--pale-green);

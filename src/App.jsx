@@ -189,12 +189,6 @@ export default function App() {
     prevClickCount.current = clickCount;
   }, [clickCount, sfx, started]);
 
-  // ── Preload next enemy image ──
-  useEffect(() => {
-    const img = new Image();
-    img.src = `https://robohash.org/${enemyId + 1}?size=350x350`;
-  }, [enemyId]);
-
   // ── Attack handler ──
   const handleAttack = (baseDamage = 1) => {
     hasInteracted.current = true;
@@ -319,7 +313,7 @@ export default function App() {
       </div>
 
       <div style={{ opacity: bgVisible ? 1 : 0, transition: 'opacity 0.4s ease' }}>
-        <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} level={level} />
+        <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} />
         <Progress progress={progress} level={level} />
       </div>
 

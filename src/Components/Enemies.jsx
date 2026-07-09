@@ -1,27 +1,21 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import robot1 from '../Images/robots/robot_1.webp';
+import robot2 from '../Images/robots/robot_2.webp';
+import robot3 from '../Images/robots/robot_3.webp';
+import robot4 from '../Images/robots/robot_4.webp';
+import robot5 from '../Images/robots/robot_5.webp';
 
-const getColorForLevel = (level) => {
-    if (level <= 10)  return 'grey';
-    if (level <= 20) return 'yellow';
-    if (level <= 30) return 'blue';
-    if (level <= 40) return 'green';
-    if (level <= 50) return 'purple';
-    if (level <= 60) return 'purple';
-    if (level <= 70) return 'orange';
-    if (level <= 80) return 'pink';
-    if (level <= 90) return 'yellow';
-    return 'black';
-};
+const robotImages = [robot1, robot2, robot3, robot4, robot5];
 
-const Enemies = ({ id, onClick, level }) => {
-    const color = getColorForLevel(level);
+const Enemies = ({ id, onClick }) => {
+    const robotImage = useMemo(
+        () => robotImages[Math.floor(Math.random() * robotImages.length)],
+        [id]
+    );
 
     return (
         <div className="enemies" onClick={onClick}>
-            <img
-                alt="robot_enemy"
-                src={`https://robohash.org/${id}?color=${color}`}
-            />
+            <img alt="robot_enemy" src={robotImage} />
         </div>
     );
 };
