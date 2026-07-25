@@ -58,8 +58,14 @@ export default function App() {
 
   // ── UI state ──
   const [started, setStarted] = useState(false);
-  const [music, setMusic] = useState(true);
-  const [sfx, setSfx] = useState(true);
+  const [music, setMusic] = useState(() => {
+    const saved = localStorage.getItem('musicEnabled');
+    return saved !== null ? saved === 'true' : true;
+  });
+  const [sfx, setSfx] = useState(() => {
+    const saved = localStorage.getItem('sfxEnabled');
+    return saved !== null ? saved === 'true' : true;
+  });
 
   // ── Game state (defaults — overwritten after save loads) ──
   const [level, setLevel] = useState(1);
@@ -161,6 +167,14 @@ export default function App() {
     if (!started) return;
     music ? bgMusic.current.play().catch(() => {}) : bgMusic.current.pause();
   }, [music, started]);
+
+  useEffect(() => {
+    localStorage.setItem('musicEnabled', music);
+  }, [music]);
+
+  useEffect(() => {
+    localStorage.setItem('sfxEnabled', sfx);
+  }, [sfx]);
 
   // ── Background transition on level change ──
   useEffect(() => {
@@ -265,11 +279,11 @@ export default function App() {
 
   // ── Render ──
   if (authLoading) {
-    return <div className="loading-screen">Loading…</div>;
+    return <StartScreen loadingText="Loading…" />;
   }
 
   if ((user || playAsGuest) && !saveLoaded) {
-    return <div className="loading-screen">Loading save…</div>;
+    return <StartScreen loadingText="Loading save…" />;
   }
 
   if (!started) {

@@ -3,7 +3,7 @@ import startPageImg from '../Images/start-page/startpage.png';
 import logo from '../Images/start-page/logo.png';
 import './StartScreen.css';
 
-export default function StartScreen({ user, onStart, onGuest, onLogin, onSignUp }) {
+export default function StartScreen({ user, onStart, onGuest, onLogin, onSignUp, loadingText }) {
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +34,14 @@ export default function StartScreen({ user, onStart, onGuest, onLogin, onSignUp 
       <img src={startPageImg} alt="Robo Clicker" className="start-screen__image" />
 
       <div className="start-screen__auth">
-        {user ? (
+        {loadingText ? (
+          <>
+            <p className="loading-text">{loadingText}</p>
+            <div className="loading-bar">
+              <div className="loading-bar_fill" />
+            </div>
+          </>
+        ) : user ? (
           <>
             <p className="auth-subtitle">Welcome back, {user.email}!</p>
             <button className="start-screen__button" onClick={onStart}>
