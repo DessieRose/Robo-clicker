@@ -88,7 +88,9 @@ const Achievements = ({ clickCount, enemiesDefeated, totalMoneyEarned, level, au
       </div>
  
       <div className={`achievements-menu ${isOpen ? 'open' : ''}`}>
-        <h3>Achievements <span className="achievements-count">{unlocked.size}/{ACHIEVEMENTS.length}</span></h3>
+        <h3>Achievements</h3>
+        <h4 className="achievements-count">{unlocked.size}/{ACHIEVEMENTS.length}</h4>
+        <p>Click a card to flip it and see the details!</p>
  
         <div className="achievements-grid">
           {ACHIEVEMENTS.map(a => {

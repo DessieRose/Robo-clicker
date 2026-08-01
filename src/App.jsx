@@ -327,7 +327,7 @@ export default function App() {
       </div>
 
       <div style={{ opacity: bgVisible ? 1 : 0, transition: 'opacity 0.4s ease' }}>
-        <Enemies key={enemyId} id={enemyId} onClick={() => handleAttack()} />
+        <Enemies key={enemyId} id={enemyId} level={level} onClick={() => handleAttack()} />
         <Progress progress={progress} level={level} />
       </div>
 

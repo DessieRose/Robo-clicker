@@ -110,3 +110,14 @@
     color: var(--white);
     /* opacity: 0.85; */
 }
+
+.achievements-menu h4 {
+  text-align: center;
+  margin: 0;
+}
+
+.achievements-menu p {
+    text-align: center;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}

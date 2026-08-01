@@ -1,17 +1,27 @@
 import React, { useMemo } from 'react';
-import robot1 from '../Images/robots/robot_1.webp';
-import robot2 from '../Images/robots/robot_2.webp';
-import robot3 from '../Images/robots/robot_3.webp';
-import robot4 from '../Images/robots/robot_4.webp';
-import robot5 from '../Images/robots/robot_5.webp';
 
-const robotImages = [robot1, robot2, robot3, robot4, robot5];
+const ROBOTS_PER_TIER = 5;
+const LEVELS_PER_TIER = 10;
 
-const Enemies = ({ id, onClick }) => {
-    const robotImage = useMemo(
-        () => robotImages[Math.floor(Math.random() * robotImages.length)],
-        [id]
-    );
+const robotContext = require.context('../Images/robots', false, /robot_\d+\.webp$/);
+const robotImages = robotContext
+    .keys()
+    .sort((a, b) => Number(a.match(/\d+/)[0]) - Number(b.match(/\d+/)[0]))
+    .map(robotContext);
+
+const maxTier = Math.floor((robotImages.length - 1) / ROBOTS_PER_TIER);
+
+const getRobotsForLevel = (level) => {
+    const tier = Math.min(Math.floor((level - 1) / LEVELS_PER_TIER), maxTier);
+    const start = tier * ROBOTS_PER_TIER;
+    return robotImages.slice(start, start + ROBOTS_PER_TIER);
+};
+
+const Enemies = ({ id, level, onClick }) => {
+    const robotImage = useMemo(() => {
+        const options = getRobotsForLevel(level);
+        return options[Math.floor(Math.random() * options.length)];
+    }, [id, level]);
 
     return (
         <div className="enemies" onClick={onClick}>
