@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Enemies from './Components/Enemies.jsx';
 import Exp from './Components/Exp.jsx';
 import Progress from './Components/Progress.jsx';
@@ -83,6 +83,8 @@ export default function App() {
   const [progress, setProgress] = useState(100);
   const [enemyId, setEnemyId] = useState(Math.floor(Math.random() + 1));
   const [bgUrl, setBgUrl] = useState(() => getBackground(1));
+  const [incomingBg, setIncomingBg] = useState(null);
+  const [incomingShow, setIncomingShow] = useState(false);
   const [bgVisible, setBgVisible] = useState(true);
 
   // ── Save hook (must be called before any early returns) ──
@@ -177,16 +179,49 @@ export default function App() {
   }, [sfx]);
 
   // ── Background transition on level change ──
-  useEffect(() => {
+  // The old background stays put as a static base layer; the new one is
+  // preloaded and crossfaded in on top of it, so there's never a moment
+  // where nothing but the page's default white is showing through.
+  // useLayoutEffect (not useEffect) so bgVisible flips to false before the
+  // browser paints — otherwise the new-level enemy briefly renders at full
+  // opacity over the old background for one frame before hiding.
+  useLayoutEffect(() => {
     const next = getBackground(level);
-    if (next === bgUrl) return;
+    if (next === bgUrl || next === incomingBg) return;
+
+    let cancelled = false;
     setBgVisible(false);
-    const t = setTimeout(() => {
-      setBgUrl(next);
-      setBgVisible(true);
-    }, 400);
-    return () => clearTimeout(t);
-  }, [level, bgUrl]);
+
+    const img = new Image();
+    const startCrossfade = () => {
+      if (cancelled) return;
+      setIncomingBg(next);
+      setIncomingShow(false);
+    };
+    img.onload = startCrossfade;
+    img.onerror = startCrossfade;
+    img.src = next;
+
+    return () => { cancelled = true; };
+  }, [level, bgUrl, incomingBg]);
+
+  // Once the incoming layer is mounted at opacity 0, flip it to 1 on the next
+  // frame so the browser actually animates the transition instead of
+  // snapping straight to the target opacity.
+  useLayoutEffect(() => {
+    if (incomingBg == null || incomingShow) return;
+    const raf = requestAnimationFrame(() => setIncomingShow(true));
+    return () => cancelAnimationFrame(raf);
+  }, [incomingBg, incomingShow]);
+
+  // Once the crossfade finishes, promote the incoming image to the base
+  // layer and reveal the enemy/progress again.
+  const handleBgCrossfadeEnd = () => {
+    setBgUrl(incomingBg);
+    setIncomingBg(null);
+    setIncomingShow(false);
+    setBgVisible(true);
+  };
 
   // ── Sound effects ──
   useEffect(() => {
@@ -307,10 +342,25 @@ export default function App() {
         backgroundSize: 'auto 90%',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'top center',
-        opacity: bgVisible ? 1 : 0,
-        transition: 'opacity 0.4s ease',
-        zIndex: -1,
+        zIndex: -2,
       }} />
+
+      {incomingBg && (
+        <div
+          onTransitionEnd={handleBgCrossfadeEnd}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundImage: `url(${incomingBg})`,
+            backgroundSize: 'auto 90%',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'top center',
+            opacity: incomingShow ? 1 : 0,
+            transition: 'opacity 0.6s ease',
+            zIndex: -1,
+          }}
+        />
+      )}
 
       <div className="stats">
         <Exp exp={exp} />
@@ -326,7 +376,7 @@ export default function App() {
         </div>
       </div>
 
-      <div style={{ opacity: bgVisible ? 1 : 0, transition: 'opacity 0.4s ease' }}>
+      <div style={{ opacity: bgVisible ? 1 : 0, transition: 'opacity 0.6s ease' }}>
         <Enemies key={enemyId} id={enemyId} level={level} onClick={() => handleAttack()} />
         <Progress progress={progress} level={level} />
       </div>
