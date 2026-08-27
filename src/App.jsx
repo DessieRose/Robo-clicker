@@ -7,9 +7,11 @@ import Level from './Components/Level.jsx';
 import Money from './Components/Money.jsx';
 import Settings from './Components/Settings.jsx';
 import Achievements from './Components/Achievements.jsx';
-import Upgrades from './Components/Upgrades.jsx';
+import Upgrades, { hasAffordableUpgrade } from './Components/Upgrades.jsx';
 import { Stages } from './Components/AutoUpgradeCard.jsx';
 import StartScreen from './Components/StartScreen.jsx';
+import Modal from './Modals/Modal.jsx';
+import { TIPS } from './Modals/tips.js';
 import backgroundMusic from './music/background-music.mp3';
 import LevelUpSound from './music/level-up.mp3';
 import MetalTap from './music/metal-tap.mp3';
@@ -77,6 +79,10 @@ export default function App() {
   const [clickCount, setClickCount] = useState(0);
   const [upgrades, setUpgrades] = useState(DEFAULT_UPGRADES);
   const [autoUpgrades, setAutoUpgrades] = useState(DEFAULT_AUTO_UPGRADES);
+  const [seenTips, setSeenTips] = useState([]);
+
+  // ── Onboarding tips (session flag; persistence is via seenTips) ──
+  const [achievementUnlocked, setAchievementUnlocked] = useState(false);
 
   // ── Session-only state (never saved) ──
   const [autoClickCount, setAutoClickCount] = useState(0);
@@ -89,9 +95,9 @@ export default function App() {
 
   // ── Save hook (must be called before any early returns) ──
   useGameSave(
-    { level, maxLevel, money, totalMoneyEarned, exp, enemiesDefeated, clickCount, upgrades, autoUpgrades },
+    { level, maxLevel, money, totalMoneyEarned, exp, enemiesDefeated, clickCount, upgrades, autoUpgrades, seenTips },
     user,
-    saveLoaded 
+    saveLoaded
   );
 
   // ── Auto-start for returning logged-in users ──
@@ -133,6 +139,7 @@ export default function App() {
         setClickCount(save.clickCount ?? 0);
         setUpgrades(save.upgrades ?? DEFAULT_UPGRADES);
         setAutoUpgrades(save.autoUpgrades ?? DEFAULT_AUTO_UPGRADES);
+        setSeenTips(save.seenTips ?? []);
         setBgUrl(getBackground(save.level ?? 1));
       }
 
@@ -312,6 +319,16 @@ export default function App() {
     setEnemyId(prev => prev + 1);
   };
 
+  // ── Onboarding tip: first not-yet-seen tip whose trigger is active ──
+  const tipCtx = {
+    started,
+    level,
+    achievementUnlocked,
+    canAffordUpgrade: hasAffordableUpgrade(money, upgrades, autoUpgrades),
+  };
+  const activeTip = TIPS.find(t => !seenTips.includes(t.id) && t.isTriggered(tipCtx));
+  const dismissTip = () => setSeenTips(prev => [...prev, activeTip.id]);
+
   // ── Render ──
   if (authLoading) {
     return <StartScreen loadingText="Loading…" />;
@@ -390,7 +407,10 @@ export default function App() {
           level={level}
           autoUpgrades={autoUpgrades}
           upgrades={upgrades}
-          onUnlock={() => { if (sfx) achievementSfx.current.play().catch(() => {}); }}
+          onUnlock={() => {
+            if (sfx) achievementSfx.current.play().catch(() => {});
+            setAchievementUnlocked(true);
+          }}
         />
         <Upgrades
           money={money}
@@ -401,6 +421,12 @@ export default function App() {
           setAutoUpgrades={setAutoUpgrades}
         />
       </div>
+
+      {activeTip && (
+        <Modal isOpen title={activeTip.title} onClose={dismissTip}>
+          <p>{activeTip.body}</p>
+        </Modal>
+      )}
     </div>
   );
 }

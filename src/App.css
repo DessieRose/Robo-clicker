@@ -275,3 +275,88 @@ body {
   color: var(--white);
 }
 
+/* Modal (contextual tips + How to Play) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.55);
+}
+
+.modal-card {
+  background-color: var(--white);
+  border-radius: 1rem;
+  box-shadow: 2px 4px 20px var(--shadow);
+  padding: 1.75rem 1.5rem 1.5rem;
+  max-width: 340px;
+  width: 100%;
+  text-align: center;
+}
+
+.modal-card h2 {
+  font-family: "Andika", sans-serif;
+  margin: 0 0 0.75rem;
+  font-size: 1.4rem;
+  color: var(--dark-pale-orange);
+}
+
+.modal-card p {
+  margin: 0 0 1.25rem;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: #333;
+}
+
+.modal-card button {
+  border: none;
+  background-color: var(--pale-green);
+  color: var(--white);
+  font-size: 1.1rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 0.9rem;
+  width: 100%;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.modal-card button:active {
+  opacity: 0.8;
+}
+
+.instructions-list {
+  text-align: left;
+  margin: 0 0 1.25rem;
+  padding-left: 1.2rem;
+}
+
+.instructions-list li {
+  margin-bottom: 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #333;
+}
+
+.how-to-play-btn {
+  display: flex;
+  justify-content: center;
+  background-color: var(--pale-peach);
+  border: none;
+  width: 93%;
+  color: var(--white);
+  padding: 1rem;
+  font-size: 1.2rem;
+  border-radius: 1rem;
+  margin: 0.75rem 1rem 0;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.how-to-play-btn:active {
+  opacity: 0.8;
+}
+

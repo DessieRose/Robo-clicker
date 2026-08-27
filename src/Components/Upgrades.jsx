@@ -10,6 +10,20 @@ import luckIcon from "../Images/icons/luck-icon.webp";
 import attackDamageIcon from "../Images/icons/attack-damage-icon.webp";
 import criticalDamageIcon from "../Images/icons/critical-damage-icon.webp";
 
+// Is any combat or auto upgrade currently affordable? Shared with App.jsx so the
+// "time to upgrade" tip fires on the same condition that highlights the button.
+export function hasAffordableUpgrade(money, upgrades, autoUpgrades) {
+  const combat = Object.entries(upgrades).some(
+    ([key, u]) => u.level !== 'MAX' && money >= getUpgradePrice(key, u.level)
+  );
+  const auto = Object.entries(autoUpgrades).some(([key, u]) => {
+    const stageData = Stages.find(s => s.upgradeName.toLowerCase() === key);
+    const nextStage = stageData?.stages.find(s => s.stage === u.stage + 1);
+    return nextStage && money >= nextStage.price;
+  });
+  return combat || auto;
+}
+
 const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAutoUpgrades }) => {
   const [isOpen, setIsOpen] = useState(false);
   // const [isInfoOpen, setIsInfoOpen] = useState(false);
@@ -47,17 +61,11 @@ const Upgrades = ({ money, setMoney, upgrades, setUpgrades, autoUpgrades, setAut
     }));
   };
 
-  const hasAffordableUpgrade =
-    Object.entries(upgrades).some(([key, u]) => u.level !== 'MAX' && money >= getUpgradePrice(key, u.level)) ||
-    Object.entries(autoUpgrades).some(([key, u]) => {
-      const stageData = Stages.find(s => s.upgradeName.toLowerCase() === key);
-      const nextStage = stageData?.stages.find(s => s.stage === u.stage + 1);
-      return nextStage && money >= nextStage.price;
-    });
+  const showUpgradeHint = hasAffordableUpgrade(money, upgrades, autoUpgrades);
 
   return (
     <>
-      <div className={`upgrades ${hasAffordableUpgrade ? 'has-new' : ''}`} onClick={() => setIsOpen(!isOpen)}>
+      <div className={`upgrades ${showUpgradeHint ? 'has-new' : ''}`} onClick={() => setIsOpen(!isOpen)}>
         <FiPlusCircle className="icon" />
       </div>
 

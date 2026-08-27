@@ -66,10 +66,10 @@ export const useGameSave = (gameState, user, saveLoaded) => {
     userRef.current = user;
 
     const save = useCallback(() => {
-        const { 
+        const {
             level, maxLevel, money, totalMoneyEarned,
             exp, enemiesDefeated, clickCount,
-            upgrades, autoUpgrades 
+            upgrades, autoUpgrades, seenTips
         } = stateRef.current;
         const currentUser = userRef.current;
 
@@ -78,7 +78,8 @@ export const useGameSave = (gameState, user, saveLoaded) => {
             savedAt: Date.now(),
             level, maxLevel, money, totalMoneyEarned,
             exp, enemiesDefeated, clickCount,
-            upgrades, autoUpgrades
+            upgrades, autoUpgrades,
+            seenTips: seenTips ?? []
         };
 
         localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
@@ -100,7 +101,7 @@ export const useGameSave = (gameState, user, saveLoaded) => {
     useEffect(() => { 
         if (!saveLoaded) return; // Don't save until the initial save is loaded
         save(); 
-    }, [gameState.level, gameState.enemiesDefeated, save, saveLoaded]);
+    }, [gameState.level, gameState.enemiesDefeated, gameState.seenTips, save, saveLoaded]);
 
     return { save };
 };

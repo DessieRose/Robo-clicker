@@ -1,6 +1,7 @@
 import { FiSettings } from "react-icons/fi";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import InstructionsModal from "../Modals/InstructionsModal";
 
 const Toggle = ({ label, checked, onChange }) => (
   <div className="settings-toggle-row">
@@ -19,6 +20,7 @@ const getFirstName = (email) => {
 
 const Settings = ({ music, setMusic, sfx, setSfx }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [instructionsOpen, setInstructionsOpen] = useState(false);
   const { user, signIn, signUp, signOut } = useAuth();
 
   return (
@@ -31,6 +33,9 @@ const Settings = ({ music, setMusic, sfx, setSfx }) => {
         <h3>Settings</h3>
         <Toggle label="Music" checked={music} onChange={() => setMusic(m => !m)} />
         <Toggle label="Sound effects" checked={sfx} onChange={() => setSfx(s => !s)} />
+        <button className="how-to-play-btn" onClick={() => setInstructionsOpen(true)}>
+          How to play
+        </button>
         {!user && (
           <>
             <button className="signin-btn" onClick={() => { signIn(); }}>
@@ -55,6 +60,11 @@ const Settings = ({ music, setMusic, sfx, setSfx }) => {
           Close
         </button>
       </div>
+
+      <InstructionsModal
+        isOpen={instructionsOpen}
+        onClose={() => setInstructionsOpen(false)}
+      />
     </>
   );
 };

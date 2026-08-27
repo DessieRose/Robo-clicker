@@ -1,5 +1,5 @@
 import BgGrassland from './Images/bg/grassland.webp';
-import BgDarkForest from './Images/bg/dark_forest_2.jpeg';
+import BgDarkForest from './Images/bg/dark_forest.webp';
 import BgDesert from './Images/bg/desert.webp';
 import BgMountains from './Images/bg/mountains.webp';
 import BgStorm from './Images/bg/storm.webp';
