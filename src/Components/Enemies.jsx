@@ -17,11 +17,11 @@ const getRobotsForLevel = (level) => {
     return robotImages.slice(start, start + ROBOTS_PER_TIER);
 };
 
-const Enemies = ({ id, level, onClick }) => {
+const Enemies = ({ level, onClick }) => {
     const robotImage = useMemo(() => {
         const options = getRobotsForLevel(level);
         return options[Math.floor(Math.random() * options.length)];
-    }, [id, level]);
+    }, [level]);
 
     return (
         <div className="enemies" onClick={onClick}>

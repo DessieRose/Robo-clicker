@@ -47,6 +47,19 @@
   box-shadow: 1px 2px 4px var(--shadow);
 }
 
+.start-screen__version {
+  position: absolute;
+  z-index: 1;
+  bottom: 12px;
+  left: 14px;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 3px var(--shadow);
+}
+
 /* ── Auth on Start Screen ── */
 
 .start-screen__auth {

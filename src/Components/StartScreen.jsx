@@ -33,6 +33,8 @@ export default function StartScreen({ user, onStart, onGuest, onLogin, onSignUp,
       <img src={logo} alt="Robo Clicker Logo" className="start-screen__logo" />
       <img src={startPageImg} alt="Robo Clicker" className="start-screen__image" />
 
+      <span className="start-screen__version">V.1.0</span>
+
       <div className="start-screen__auth">
         {loadingText ? (
           <>

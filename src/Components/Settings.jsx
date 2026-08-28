@@ -31,11 +31,6 @@ const Settings = ({ music, setMusic, sfx, setSfx }) => {
 
       <div className={`settings-menu ${isOpen ? 'open' : ''}`}>
         <h3>Settings</h3>
-        <Toggle label="Music" checked={music} onChange={() => setMusic(m => !m)} />
-        <Toggle label="Sound effects" checked={sfx} onChange={() => setSfx(s => !s)} />
-        <button className="how-to-play-btn" onClick={() => setInstructionsOpen(true)}>
-          How to play
-        </button>
         {!user && (
           <>
             <button className="signin-btn" onClick={() => { signIn(); }}>
@@ -56,6 +51,12 @@ const Settings = ({ music, setMusic, sfx, setSfx }) => {
             </button>
           </>
         )}
+        <button className="how-to-play-btn" onClick={() => setInstructionsOpen(true)}>
+          How to play
+        </button>
+        <Toggle label="Music" checked={music} onChange={() => setMusic(m => !m)} />
+        <Toggle label="Sound effects" checked={sfx} onChange={() => setSfx(s => !s)} />
+        
         <button className="close-btn" onClick={() => setIsOpen(false)}>
           Close
         </button>
